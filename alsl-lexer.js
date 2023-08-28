@@ -102,7 +102,7 @@ class Lexer{
         //console.log((rawCode))
         for(let i of rawCode.split("\n")){
 
-            let str = i.trimStart().split(" ")
+            let str = (i.trimStart().split(" ")).replace('\r', '')
 
             //console.log(str)
 
@@ -128,7 +128,7 @@ class Lexer{
         for(let i of rawCode.split("\n")){
             let newInstruction = [null, []]
 
-            let str = i.trimStart().split(" ")
+            let str = (i.trimStart().split(" ")).replace('\r', '')
 
             //console.log(str)
 
