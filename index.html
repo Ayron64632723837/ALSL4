@@ -23,7 +23,7 @@
 
         isRunning = true
 
-        let raw = editor.getValue()
+        let raw = editor.getValue().replace('\r', '')
 
         l = new Lexer(raw)
 
