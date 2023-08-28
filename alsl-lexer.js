@@ -98,9 +98,9 @@ class Lexer{
     constructor(rawCode){
         let step = -1
         let code = []
-        //rawCode = rawCode.replace('\r', '')
+        rawCode = rawCode.replace('\r', '')
         //console.log((rawCode))
-        for(let i of rawCode.split("\r\n")){
+        for(let i of rawCode.split("\n")){
 
             let str = i.trimStart().split(" ")
 
@@ -125,7 +125,7 @@ class Lexer{
 
         //console.log(this)
 
-        for(let i of rawCode.split("\r\n")){
+        for(let i of rawCode.split("\n")){
             let newInstruction = [null, []]
 
             let str = i.trimStart().split(" ")
