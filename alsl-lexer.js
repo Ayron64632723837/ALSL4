@@ -190,8 +190,7 @@ class Lexer{
 
     parseArgument(raw){
         let result = []
-        //console.log(this.points)
-        //console.log(raw)
+        raw = raw.replace('\r', '')
         switch(true){
             case /^-?[0-9]+$/i.test(raw):
                 result = [
