@@ -102,7 +102,7 @@ class Lexer{
         //console.log((rawCode))
         for(let i of rawCode.split("\n")){
 
-            let str = (i.trimStart().split(" ")).replace('\r', '')
+            let str = (i.trimStart().split(" ")).replace('\r', "")
 
             //console.log(str)
 
@@ -128,7 +128,7 @@ class Lexer{
         for(let i of rawCode.split("\n")){
             let newInstruction = [null, []]
 
-            let str = (i.trimStart().split(" ")).replace('\r', '')
+            let str = (i.trimStart().split(" ")).replace('\r', "")
 
             //console.log(str)
 
@@ -190,7 +190,8 @@ class Lexer{
 
     parseArgument(raw){
         let result = []
-        raw = raw.replace('\r', '')
+        raw = raw.replace('\r', "")
+        raw = raw.replace(' ', "")
         switch(true){
             case /^-?[0-9]+$/i.test(raw):
                 result = [
