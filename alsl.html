@@ -1,0 +1,270 @@
+<head>
+    <title>ASLS</title>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <canvas id="screen" style="background-color: black; width: 512px; height: 512px;" tabindex="0"></canvas>
+    <script>
+        document.getElementById("screen").addEventListener("keydown", function(e) {
+            e.preventDefault();
+            let key = event.keyCode
+            n.pregs.set(PREGS.KB, key)
+        })
+    </script>
+    
+    <br>
+
+    <button class="button" onclick="
+
+    if(!isRunning){
+
+        isRunning = true
+
+        let raw = editor.getValue()
+
+        l = new Lexer(raw)
+
+        dbl = Number(document.getElementById('dbs').value)
+        abl = Number(document.getElementById('abs').value)
+
+        sw = Number(document.getElementById('swpx').value)
+        sh = Number(document.getElementById('shpx').value)
+        swc = Number(document.getElementById('sws').value)
+        shc = Number(document.getElementById('shs').value)
+
+        n = new Machine(dbl, abl, code=l.code, sw=sw, sh=sh, swc=swc, shc=shc)
+
+
+        ips = Number(document.getElementById('speed').value)
+
+    }
+
+    interval = setInterval(f => {
+        //console.log(n)
+        //console.log(keys)
+        n.perform()
+    }, 1000/ips)">Start</button>
+    <button class="button" onclick="clearInterval(interval); n.pc = -1; isRunning = false">Stop</button>
+    <button class="button" onclick="clearInterval(interval);">Pause</button>
+    
+    <buttom class="button" onclick="
+    var input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'alsl alslfs'
+    
+    input.onchange = e => { 
+    
+    var file = e.target.files[0]
+
+    let ext = file.name.split('.').pop()
+
+    console.log(ext)
+
+    var reader = new FileReader()
+    reader.readAsText(file,'UTF-8')
+
+    reader.onload = readerEvent => {
+        var content = readerEvent.target.result
+        if(ext == 'alsl' || ext == 'txt'){
+            editor.setValue(content, -1)
+        }else if(ext == 'alslfs' || ext == 'json'){
+            let loaddata = JSON.parse(content)
+
+            console.log(loaddata)
+
+            editor.setValue(loaddata.value, -1)
+            document.getElementById('speed').value = loaddata.machine.speed
+            document.getElementById('dbs').value = loaddata.machine.databus
+            document.getElementById('abs').value = loaddata.machine.addressbus
+
+            document.getElementById('swpx').value = loaddata.screen.width
+            document.getElementById('shpx').value = loaddata.screen.height
+            document.getElementById('sws').value = loaddata.screen.widthChars
+            document.getElementById('shs').value = loaddata.screen.heightChars
+        }
+    }
+    
+    }
+    
+    input.click();">Load</buttom>
+
+    <buttom class="button" onclick="
+    function saveTxtToFile(fileName, textData) {
+        const blobData = new Blob([textData], { type: 'text/plain' });
+        const urlToBlob = window.URL.createObjectURL(blobData);
+
+        const a = document.createElement('a');
+        a.style.setProperty('display', 'none');
+        document.body.appendChild(a);
+        a.href = urlToBlob;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(urlToBlob);
+        a.remove();
+    }
+
+    let value = editor.getValue()
+    saveTxtToFile('code.alsl', value);
+    ">Save raw</buttom>
+    <buttom class="button" onclick="
+    function saveTxtToFile(fileName, textData) {
+        const blobData = new Blob([textData], { type: 'text/plain' });
+        const urlToBlob = window.URL.createObjectURL(blobData);
+
+        const a = document.createElement('a');
+        a.style.setProperty('display', 'none');
+        document.body.appendChild(a);
+        a.href = urlToBlob;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(urlToBlob);
+        a.remove();
+    }
+
+    let val = editor.getValue()
+    let data = {
+        value: val,
+        screen: {
+            width: Number(document.getElementById('swpx').value),
+            height: Number(document.getElementById('shpx').value),
+            widthChars: Number(document.getElementById('sws').value),
+            heightChars: Number(document.getElementById('shs').value)
+        },
+        machine: {
+            speed: Number(document.getElementById('speed').value),
+            databus: Number(document.getElementById('dbs').value),
+            addressbus: Number(document.getElementById('abs').value)
+        }
+    }
+    console.log(data)
+    saveTxtToFile('code.alslfs', JSON.stringify(data));
+    ">Save with settings</buttom>
+    
+    <pre id="code" style="width: 100%; height: auto; min-height: 500px"></pre>
+    <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        editor = ace.edit("code");
+        editor.setTheme("ace/theme/chaos");
+        editor.session.setMode("ace/mode/alsl");
+    </script>
+    
+    <table>
+        <tr>
+            <th style="vertical-align: top;">
+                <table class="table">
+                    <tr>
+                        <th style="text-align: center; text-decoration: underline; font-size: 1.2em" colspan="2">Computation Settings</th>
+                    </tr>
+                    <tr>
+                        <th>Instructions per second</th>
+                        <th>
+                            <input value = "50" id="speed" title="Speed" type="number" min="1">
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Data bus size(bits)</th>
+                        <th>
+                            <input value = "8" id="dbs" title="Databus", type="number" min="4" max="512">
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Address bus size(bits)</th>
+                        <th>
+                            <input value = "8" id="abs" title="Addressbus", type="number" min="4" max="512">
+                        </th>
+                    </tr>
+                </table>
+            </th>
+            <th style="vertical-align: top;">
+                <table class="table">
+                    <tr>
+                        <th style="text-align: center; text-decoration: underline; font-size: 1.2em" colspan="2">Screen Settings</th>
+                    </tr>
+                    <tr>
+                        <th>Width(pixels)</th>
+                        <th>
+                            <input value = "512" id="swpx" title="Width in Pixels" type="number" min="4">
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Height(pixels)</th>
+                        <th>
+                            <input value = "512" id="shpx" title="Height in Pixels", type="number" min="4">
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Width(symbols)</th>
+                        <th>
+                            <input value = "32" id="sws" title="Width in Symbols", type="number" min="4">
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Height(symbols)</th>
+                        <th>
+                            <input value = "32" id="shs" title="Height in Symbols", type="number" min="4">
+                        </th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th>
+                            <button class="button" style="width: 100%" onclick="
+                            document.getElementById('screen').style
+                                .width = document.getElementById('swpx').value
+                                .height = document.getElementById('shpx').value">Apply</button>
+                        </th>
+                    </tr>
+                </table>
+            </th>
+        </tr>
+    </table>
+
+    <br>
+
+    <p>
+        <a href="https://www.keshikan.net/fonts-e.html" target="_blank">DSEG font</a>
+        , 
+        <a href="https://ace.c9.io/" target="_blank">Ace Code Editor</a>
+    </p>
+    
+    
+    <script src="alsl.js"></script>
+    <script src="alsl-lexer.js"></script>
+
+    <script>rawCode = `ext`
+
+        let isRunning = false
+
+        keys = {}
+
+        let l = new Lexer(rawCode)
+
+        let dbl = Number(document.getElementById("dbs").value)
+        let abl = Number(document.getElementById("abs").value)
+
+        let sw = Number(document.getElementById("swpx").value)
+        let sh = Number(document.getElementById("shpx").value)
+        let swc = Number(document.getElementById("sws").value)
+        let shc = Number(document.getElementById("shs").value)
+
+        let n = new Machine(dbl, abl, code=l.code, sw=sw, sh=sh, swc=swc, shc=shc)
+        
+        window.addEventListener("keyup", press);
+        window.addEventListener("keypress", press);
+        //window.addEventListener("keydown", log);
+        
+        function press(event){
+            let key = event.keyCode
+        
+            n.pregs.set(PREGS.KB, key)
+        
+        }
+        
+        let interval
+        
+        /*interval = setInterval(f => {
+            console.log(n)
+            n.perform()
+        }, 1000/document.getElementById('speed').value)*/</script>
+</body>
