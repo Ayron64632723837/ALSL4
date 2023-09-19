@@ -33,6 +33,8 @@ const KEYWORDS = {
     JWR: 46,
     PNT: 47,
     CLS: 48,
+    PLT: 49,
+    PTL: 410,
 }
 
 
