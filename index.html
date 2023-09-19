@@ -42,10 +42,18 @@
 
     }
 
+    let last_interval = performance.now();
+
     interval = setInterval(f => {
-        //console.log(n)
-        //console.log(keys)
-        n.perform()
+        const now = performance.now();
+        const dt = now - last_interval;
+        last_interval = now;
+        
+        const iterations = Math.ceil(ips * dt / 1000);
+        
+        for (let i = 0; i < iterations; ++i) {
+            n.perform();
+        }
     }, 1000/ips)">Start</button>
     <button class="button" onclick="clearInterval(interval); n.pc = -1; isRunning = false">Stop</button>
     <button class="button" onclick="clearInterval(interval);">Pause</button>
