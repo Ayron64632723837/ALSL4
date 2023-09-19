@@ -647,10 +647,10 @@ class Machine{
         let r0 = a * b
         let r1 = a * b >> this.datasize
         if (args[2][0] == TYPE.PREG){
-            this.pregs.set(c, r)
+            this.pregs.set(c, r0)
         }else{
-            this.ram.set(c, r)
-            this.ram.set(c + 1, r)
+            this.ram.set(c, r0)
+            this.ram.set(c + 1, r1)
         }
 
         this.update_flags(r)
