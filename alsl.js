@@ -653,7 +653,7 @@ class Machine{
             this.ram.set(c + 1, r1)
         }
 
-        this.update_flags(r)
+        this.update_flags(r0)
 
         this.pc++
 
