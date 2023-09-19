@@ -422,6 +422,36 @@ class Screen{
         this.canvas.fillStyle=color
         this.canvas.drawImage(this.img, imgX, imgY, 8, 8, x*charwidth, y*charheight, charwidth, charheight)
     }
+    dot(x, y, color='white'){
+        console.log(x, y)
+        this.canvas.fillStyle = color
+        this.canvas.fillRect(x, y, 1, 1)
+    }
+
+    plot(x, y, char, color="white", bgcolor="transparent"){
+
+        let charnum
+        if(typeof(char) == String){
+            charnum = char.charCodeAt(0) % 256
+        }else {
+            charnum = char
+        }
+        let charwidth = this.width / this.wchars
+        let charheight = this.height / this.hchars
+
+        if(charnum == 0){
+            this.canvas.clearRect(x, y, charwidth, charheight)
+            return
+        }
+
+        let imgX = (charnum % 16) * 8
+        let imgY = ((charnum - (charnum % 16)) / 16) * 8
+        
+        this.canvas.fillStyle = bgcolor
+        this.canvas.fillRect(x * charwidth, y * charheight, charwidth, charheight)
+        this.canvas.fillStyle=color
+        this.canvas.drawImage(this.img, imgX, imgY, this.img.width / 16, this.img.height / 16, x, y, charwidth, charheight)
+    }
 
     clear(){
         this.canvas.clearRect(0, 0, this.width, this.height)
@@ -877,6 +907,43 @@ class Machine{
 
         return true
     }
+    op_plt(args){
+
+        if (args.length < 2) throw new ArgumentsCountError("Expected at least 2 arguments at line [" + String(this.pc), "], got [" + String(args.length) + "].")
+        let a = this.getarg(args[0][1], args[0][0], true)
+        let b = this.getarg(args[1][1], args[1][0], true)
+        if(args.length == 3) {
+            let c = this.getarg(args[2][1], args[2][0], true)
+            this.screen.dot(a, b, "#" +
+            (((
+                ( ( ((c & 0b11000000) >>> 6) * 85 ) <<24)
+                |( ( ((c & 0b00110000) >>> 4) * 85 ) <<16)
+                |( ( ((c & 0b00001100) >> 2) * 85 ) <<8)
+                |( ( (c & 0b00000011) * 85 ) )
+            ) & 0x00000000FFFFFFFF)>>>0).toString(16).padStart(8, '0'))
+        }else{
+            this.screen.dot(a, b)
+        }
+        //console.log(c, "at (", a, ";", b, ")")
+
+        //this.update_flags(c)
+
+        return true
+    }
+    op_ptl(args){
+
+        if (args.length < 3) throw new ArgumentsCountError("Expected at least 2 arguments at line [" + String(this.pc), "], got [" + String(args.length) + "].")
+        let a = this.getarg(args[0][1], args[0][0], true)
+        let b = this.getarg(args[1][1], args[1][0], true)
+        let c = this.getarg(args[2][1], args[2][0], true)
+        //console.log(c, "at (", a, ";", b, ")")
+
+        this.screen.plot(a, b, c)
+
+        //this.update_flags(c)
+
+        return true
+    }
 
     op_jie(args){
 
@@ -1081,6 +1148,8 @@ class Machine{
             
             case OP.EXT: this.op_ext(this.code[this.pc][1]); break
             case OP.PNT: this.op_pnt(this.code[this.pc][1]); break
+            case OP.PLT: this.op_plt(this.code[this.pc][1]); break
+            case OP.PTL: this.op_ptl(this.code[this.pc][1]); break
             
             case OP.LNP: this.op_lnp(this.code[this.pc][1]); break
 
