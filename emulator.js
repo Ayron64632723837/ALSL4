@@ -40,7 +40,7 @@ class Screen{
     }
 
     async character(x, y, char, color='white', bgcolor='black'){
-
+        
         //console.error(x, y, char, pc)
 
         let charwidth = this.width / this.wchars
