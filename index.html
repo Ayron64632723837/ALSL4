@@ -16,13 +16,13 @@
         document.getElementById("screen").addEventListener("keydown", function(e) {
             e.preventDefault();
             let key = event.keyCode & 0b01111111
-            console.log(key, "down", e)
+            //console.log(key, "down", e)
             set(TYPE.PREG, PREGS.$KB, key)
         })
         document.getElementById("screen").addEventListener("keyup", function(e) {
             e.preventDefault();
             let key = event.keyCode | 0b10000000
-            console.log(key, "up", e)
+            //console.log(key, "up", e)
             set(TYPE.PREG, PREGS.$KB, key)
         })
     </script>
@@ -81,7 +81,7 @@
 
     let ext = file.name.split('.').pop()
 
-    console.log(ext)
+    //console.log(ext)
 
     var reader = new FileReader()
     reader.readAsText(file,'UTF-8')
@@ -93,7 +93,7 @@
         }else if(ext == 'alslfs' || ext == 'json'){
             let loaddata = JSON.parse(content)
 
-            console.log(loaddata)
+            //console.log(loaddata)
 
             editor.setValue(loaddata.value, -1)
             document.getElementById('speed').value = loaddata.machine.speed
@@ -159,7 +159,7 @@
             addressbus: Number(document.getElementById('abs').value)
         }
     }
-    console.log(data)
+    //console.log(data)
     saveTxtToFile('code.alslfs', JSON.stringify(data));
     ">Save with settings</buttom>
     
