@@ -1,3 +1,4 @@
+/*
 class ArgumentsCountError extends Error{
     constructor(message){
         super(message)
@@ -370,7 +371,7 @@ const keyboardMap = [
         [TYPE.REG, 0]
     ]]
 ]
-*/
+*//*
 
 
 class Screen{
@@ -1101,7 +1102,7 @@ class Machine{
         console.log(this.flags.get(3), "sign")
         console.log(this.flags.get(4), "zero")
         console.log(this.flags.get(5), "reserved")
-        console.log(this.flags.get(6), "overflow")*/
+        console.log(this.flags.get(6), "overflow")*//*
     }
 
     perform(){
@@ -1599,4 +1600,4 @@ var stuff1 = [
         [TYPE.CONST, 5]
     ]]
 ]
-
+*/
