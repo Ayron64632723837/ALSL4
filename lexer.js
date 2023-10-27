@@ -5,14 +5,14 @@ consts = {};
 points = {};
 
 function textToBin(text) {
-    console.error(text)
+    //console.error(text)
     let output = "0x"
     for (var i of text) {
         let numberstring = i.charCodeAt(0).toString(16)
         if(numberstring.length % 2 == 1) numberstring = "0" + String(numberstring)
         output += String(numberstring)
     }
-    console.error(Number(output))
+    //console.error(Number(output))
     return Number(output);
 }
 
@@ -21,7 +21,7 @@ function parseArray(text, open="(", close=")", separator=","){
 
     var result = []
     for(let i of text.slice(1, -1).split(separator)){
-        console.log(i)
+        //console.log(i)
         if(/^\s?-?[0-9]+$/i.test(i)){
             result.push( Number(i) )
         }
@@ -83,7 +83,7 @@ function lex(rawCode){
 
         let str = i.trimStart().split(" ")
 
-        console.log(str)
+        //console.log(str)
 
         if(str.length < 1) continue
 
@@ -169,7 +169,7 @@ function parseArgument(value){
             }
 
         case (value.slice(0, 2) == "@!") & (value in consts):
-            console.error("blah")
+            //console.error("blah")
             return [
                 TYPE.CONST, consts[value.toUpperCase()]
             ]
@@ -178,7 +178,7 @@ function parseArgument(value){
                 DTYPE.REG, this.vars[value.toUpperCase()], false
             ]
         case (value.slice(0, 1) == "."):
-            if(! value in points) console.error("No such point as", value)
+            if(! value in points) return [TYPE.CONST, 0]
             return [
                 TYPE.CONST, points[value]
             ]
@@ -188,7 +188,7 @@ function parseArgument(value){
                 TYPE.CONST, textToBin(value.slice(1, -1))
             ]
         case value[0] == "'" && value[value.length - 1] == "'":
-            console.log(value.slice(1, -1))
+            //console.log(value.slice(1, -1))
             return [
                 TYPE.CONST, textToBin(value.slice(1, -1))
             ]
