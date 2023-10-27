@@ -63,7 +63,7 @@ class Screen{
     }
 
     async dot(x, y, color='white'){
-        console.log(x, y)
+        //console.log(x, y)
         this.canvas.fillStyle = color
         this.canvas.fillRect(x, y, 1, 1)
     }
@@ -148,7 +148,7 @@ function set(type, address, value, doUpdateFlags){
             ram[ram[address & AL]] = value & DL
             break;
         case TYPE.PREG:
-            if(address == PREGS.$KB) console.log(value)
+            //if(address == PREGS.$KB) console.log(value)
             pregs[address] = value & DL
             break;
         case TYPE.FLAG:
