@@ -3,6 +3,11 @@
     <title>ASLS</title>
 
     <link rel="stylesheet" href="styles.css">
+
+    
+    <script src="exports.js"></script>
+    <script src="lexer.js"></script>
+    <script src="emulator.js"></script>
 </head>
 <body>
 
@@ -10,8 +15,15 @@
     <script>
         document.getElementById("screen").addEventListener("keydown", function(e) {
             e.preventDefault();
-            let key = event.keyCode
-            n.pregs.set(PREGS.KB, key)
+            let key = event.keyCode & 0b01111111
+            console.log(key, "down", e)
+            set(TYPE.PREG, PREGS.$KB, key)
+        })
+        document.getElementById("screen").addEventListener("keyup", function(e) {
+            e.preventDefault();
+            let key = event.keyCode | 0b10000000
+            console.log(key, "up", e)
+            set(TYPE.PREG, PREGS.$KB, key)
         })
     </script>
     
@@ -25,7 +37,7 @@
 
         let raw = editor.getValue().replace('\r', '')
 
-        l = new Lexer(raw)
+        code = lex(raw)
 
         dbl = Number(document.getElementById('dbs').value)
         abl = Number(document.getElementById('abs').value)
@@ -35,12 +47,12 @@
         swc = Number(document.getElementById('sws').value)
         shc = Number(document.getElementById('shs').value)
 
-        n = new Machine(dbl, abl, code=l.code, sw=sw, sh=sh, swc=swc, shc=shc)
+        pc = 0
 
-
-        ips = Number(document.getElementById('speed').value)
-
+        create(dbl, abl, null, sw=sw, sh=sh, swc=swc, shc=shc)
     }
+    
+    ips = Number(document.getElementById('speed').value)
 
     let last_interval = performance.now();
 
@@ -52,10 +64,10 @@
         const iterations = Math.ceil(ips * dt / 1000);
         
         for (let i = 0; i < iterations; ++i) {
-            n.perform();
+            perform();
         }
     }, 1000/ips)">Start</button>
-    <button class="button" onclick="clearInterval(interval); n.pc = -1; isRunning = false">Stop</button>
+    <button class="button" onclick="clearInterval(interval); pc = -1; isRunning = false">Stop</button>
     <button class="button" onclick="clearInterval(interval);">Pause</button>
     
     <buttom class="button" onclick="
@@ -236,44 +248,4 @@
         , 
         <a href="https://ace.c9.io/" target="_blank">Ace Code Editor</a>
     </p>
-    
-    
-    <script src="alsl.js"></script>
-    <script src="alsl-lexer.js"></script>
-
-    <script>rawCode = `ext`
-
-        let isRunning = false
-
-        keys = {}
-
-        let l = new Lexer(rawCode)
-
-        let dbl = Number(document.getElementById("dbs").value)
-        let abl = Number(document.getElementById("abs").value)
-
-        let sw = Number(document.getElementById("swpx").value)
-        let sh = Number(document.getElementById("shpx").value)
-        let swc = Number(document.getElementById("sws").value)
-        let shc = Number(document.getElementById("shs").value)
-
-        let n = new Machine(dbl, abl, code=l.code, sw=sw, sh=sh, swc=swc, shc=shc)
-        
-        window.addEventListener("keyup", press);
-        window.addEventListener("keypress", press);
-        //window.addEventListener("keydown", log);
-        
-        function press(event){
-            let key = event.keyCode
-        
-            n.pregs.set(PREGS.KB, key)
-        
-        }
-        
-        let interval
-        
-        /*interval = setInterval(f => {
-            console.log(n)
-            n.perform()
-        }, 1000/document.getElementById('speed').value)*/</script>
 </body>
