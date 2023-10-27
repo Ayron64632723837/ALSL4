@@ -95,6 +95,13 @@ const OP = {
     CLS: 48,
     PLT: 49,
     PTL: 410,
+    
+    JIG: 50,
+    JIS: 51,
+    JNG: 52,
+    JNS: 53,
+    JGE: 53,
+    JSE: 52,
 }
 
 const OUTPUTMAP = {

@@ -82,7 +82,7 @@ var ALSLHighlightRules = function () {
                 caseInsensitive: true
             },{
                 token: 'token keyword jump',
-                regex: /\b(jmp|jie|jne|jez|jnz|jwr)\b/,
+                regex: /\b(jmp|jie|jne|jez|jnz|jwr|jig|jis|jng|jns|jse|jge)\b/,
                 caseInsensitive: true
             },{
                 token: 'token keyword humanic',

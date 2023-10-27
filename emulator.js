@@ -222,6 +222,11 @@ function perform(){
         case OP.JWR: fsp ++; funcstack[fsp & AL] = (pc + 1) & DL; pc = get(...args[0]) - 1; break;
         case OP.RTN: pc = (funcstack[fsp & AL] - 1) & DL; fsp --; break;
         
+        case OP.JIG: if(get(...args[0]) > get(...args[1])) pc = get(...args[2]) - 1; break;
+        case OP.JIS: if(get(...args[0]) < get(...args[1])) pc = get(...args[2]) - 1; break;
+        case OP.JNG: if(get(...args[0]) <= get(...args[1])) pc = get(...args[2]) - 1; break;
+        case OP.JNS: if(get(...args[0]) >= get(...args[1])) pc = get(...args[2]) - 1; break;
+        
         case OP.EXT: pc = -1; break;
         case OP.PRINT: console.log(">>>", get(...args[0]), get(...args[1]), get(...args[2])); break;
         
