@@ -1,4 +1,3 @@
-
 ram = []
 pregs = Array(32).fill(0)
 stack = []
