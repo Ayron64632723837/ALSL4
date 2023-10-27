@@ -1,4 +1,4 @@
-const KEYWORDS = {
+/*const KEYWORDS = {
     NULL: 0,
     ADD: 31,
     SUB: 32,
@@ -276,3 +276,4 @@ class Lexer{
     }
 
 }
+*/
