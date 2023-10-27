@@ -39,7 +39,7 @@ class Screen{
 
     }
 
-    character(x, y, char, color='white', bgcolor='black'){
+    async character(x, y, char, color='white', bgcolor='black'){
 
         //console.error(x, y, char, pc)
 
@@ -62,13 +62,13 @@ class Screen{
         this.canvas.drawImage(this.img, imgX, imgY, this.img.width / 16, this.img.height / 16, x*charwidth, y*charheight, charwidth, charheight)
     }
 
-    dot(x, y, color='white'){
+    async dot(x, y, color='white'){
         console.log(x, y)
         this.canvas.fillStyle = color
         this.canvas.fillRect(x, y, 1, 1)
     }
 
-    plot(x, y, char, color="white", bgcolor="transparent"){
+    async plot(x, y, char, color="white", bgcolor="transparent"){
 
         let charnum
         if(typeof(char) == String){
@@ -93,7 +93,7 @@ class Screen{
         this.canvas.drawImage(this.img, imgX, imgY, this.img.width / 16, this.img.height / 16, x, y, charwidth, charheight)
     }
 
-    clear(){
+    async clear(){
         this.canvas.clearRect(0, 0, this.width, this.height)
     }
 }
