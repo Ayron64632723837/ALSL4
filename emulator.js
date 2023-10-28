@@ -181,7 +181,15 @@ function perform(){
 
     pregs[PREGS.$RANDOM] = Math.floor(Math.random() * DL)
 
-    args = code[pc][1]
+    if(pc < code.length){
+        args = code[pc][1]
+    }else{
+        args = [0, [
+            [TYPE.CONST, 0],
+            [TYPE.CONST, 0],
+            [TYPE.CONST, 0]
+        ]]
+    }
 /*
     switch(code[pc][0]){
         case OP.ADD:
