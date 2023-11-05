@@ -178,6 +178,7 @@ function get(type, address){
 function perform(){
     if(code.lenght < 1) return -1
     //if(pc < 0) return -1
+    if(pc === NaN) return -1
     if(pc >= code.length) return -1
 
     pregs[PREGS.$RANDOM] = Math.floor(Math.random() * DL)
