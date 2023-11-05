@@ -235,7 +235,7 @@ function perform(){
         case OP.JNG: if(get(...args[0]) <= get(...args[1])) pc = get(...args[2]) - 1; break;
         case OP.JNS: if(get(...args[0]) >= get(...args[1])) pc = get(...args[2]) - 1; break;
         
-        case OP.EXT: pc = -1; break;
+        case OP.EXT: pc = NaN; return; break;
         case OP.PRINT: console.log(">>>", get(...args[0]), get(...args[1]), get(...args[2])); break;
         
         case OP.PNT: monitor.character(get(...args[0]), get(...args[1]), get(...args[2])); break;
@@ -256,7 +256,7 @@ function perform(){
         case OP.LNP: break;
         case OP.MNP: update_flags(0); break;
     }
-
+    
     pc++
 
     return
