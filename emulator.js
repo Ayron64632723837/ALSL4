@@ -75,7 +75,9 @@ class Screen{
         nodeid.imageSmoothingEnabled = false
 
         this.canvas.imageSmoothingEnabled = false
-
+    }
+    
+    load_image(path = "./assets/default_font.png"){
         this.img = new Image()
         //this.img.setAttribute('crossOrigin', '')
         /*this.img.onload = () => {
@@ -92,14 +94,14 @@ class Screen{
             let fontctx = fontcanvas.getContext('2d')
             fontctx.drawImage(this.img, 0, 0)
     
-            this.imgdata = fontctx.getImageData(0, 0, this.img.width, this.img.height).data
+            this.imgdata = fontctx.getImageData(0, 0, this.img.width, this.img.height).data            
+            
+            let tcanvas = document.createElement('canvas')
+            tcanvas.width = this.img.width / 16
+            tcanvas.height = this.img.height / 16
+            this.tctx = tcanvas.getContext('2d')
         }
-        this.img.src = "./assets/default_font.png"
-        
-        let tcanvas = document.createElement('canvas')
-        tcanvas.width = this.img.width / 16
-        tcanvas.height = this.img.height / 16
-        this.tctx = tcanvas.getContext('2d')
+        this.img.src = path
     }
 
     async character(x, y, char, color=0xffffffff, bgcolor=0x000000ff){
@@ -211,6 +213,7 @@ function create(databus, addressbus, code, screenwidth, screenheight, screenwidt
 
     monitor = new Screen(screenwidth, screenheight,
         screenwidthchars, screenheightchars, "screen")
+    monitor.load_image()
 
     DL = 2**databus - 1
     AL = 2**addressbus - 1
