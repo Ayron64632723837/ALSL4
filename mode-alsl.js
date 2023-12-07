@@ -7,6 +7,25 @@ var ALSLHighlightRules = function () {
         start: 
        [    
             {
+                token: 'token comment',
+                regex: /(\/\/).*/,
+                caseInsensitive: true
+            },
+            {
+                token: "token comment",
+                regex:/(\/\*)/,
+                caseInsensitive:true,
+                push:[
+                    {
+                        token: "token comment",
+                        regex:/(\*\/)/,
+                        caseInsensitive:true,
+                        next:"pop"
+                    },
+                    {defaultToken:"token comment"}
+                ]
+            },
+            {
                 token: 'token string',
                 regex: /(^|[^\\])"(?:\\.|[^\\"\r\n])*"(?!\s*:)/,
                 caseInsensitive: true
@@ -39,7 +58,7 @@ var ALSLHighlightRules = function () {
             },
             {
                 token: 'token.variable.built-in',
-                regex: /\$(a|b|c|d|n|kb|x|y|z|random)\b/,
+                regex: /\$(a|b|c|d|n|kb|x|y|z|random|fcolor|bgcolor)\b/,
                 caseInsensitive: true
             },
             {
@@ -90,7 +109,7 @@ var ALSLHighlightRules = function () {
                 caseInsensitive: true
             },{
                 token: 'token keyword screen',
-                regex: /\b(pnt|cls|plt)\b/,
+                regex: /\b(pnt|cls|plt|ptl)\b/,
                 caseInsensitive: true
             },
             
