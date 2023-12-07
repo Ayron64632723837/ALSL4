@@ -17,12 +17,10 @@ function textToBin(text) {
     return Number(output);
 }
 
-function parseArray(text, open="(", close=")", separator=","){
-    //if(text[0] != open || text[text.lenght - 1] != close) return []
-
+function parseArray(text, convertText = false, open="(", close=")", separator=","){
     var result = []
     for(let i of text.slice(1, -1).split(separator)){
-        //console.log(i)
+        i = i.trim()
         if(/^\s?-?[0-9]+$/i.test(i)){
             result.push( Number(i) )
         }
@@ -33,8 +31,14 @@ function parseArray(text, open="(", close=")", separator=","){
             if(i[0] == "b"){i = i.replace("b", "0b")}
             result.push( Number(i.toLowerCase()) )
         }
-        else if(i[0] == '"' && i[i.length - 1] == '"'){
-            result.push(i.slice(1, -1))
+        else if((i[0] == '"' && i[i.length - 1] == '"')|(i[0] == "'" && i[i.length - 1] == "'")){
+            if(convertText){
+                for(let c of i.slice(1, -1)){
+                    result.push(c.charCodeAt(0))
+                }
+            }else{
+                result.push(i.slice(1, -1))
+            }
         }
     }
 
@@ -161,12 +165,11 @@ function parseArgument(value){
         case value.toUpperCase() in vars: return [TYPE.REG, vars[value.toUpperCase()]]
         case value.toUpperCase() in consts: return [TYPE.CONST, consts[value.toUpperCase()]]
 
-        case value[0] == "[" && value[1] == "]":
-
+        case value[0] == "[" && value[value.length -1] == "]":
             switch(true){
                 case /^(r|\#)[0-9a-f]+$/i.test(value.slice(1, -1)):
                     return [TYPE.LINK, Number("0x" + String(value.slice(1, -1).toLowerCase().slice(1)))]
-                case value.slice(1, -1) in PREGS: return [TYPE.PREG, PREGS[value.slice(1, -1)]]
+                case Object.keys(PREGS).includes(value.slice(1, -1).toUpperCase()): return [TYPE.PLINK, PREGS[value.slice(1, -1).toUpperCase()]]
             }
 
         case (value.slice(0, 2) == "@!") & (value in consts):

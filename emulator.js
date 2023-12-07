@@ -17,6 +17,48 @@ DS = 8
 isRunning = false
 interval = null
 
+color = {
+    r: {
+        shift: 6,
+        bits: 2,
+        limit: 3
+    },
+    g: {
+        shift: 4,
+        bits: 2,
+        limit: 3
+    },
+    b: {
+        shift: 2,
+        bits: 2,
+        limit: 3
+    },
+    a: {
+        shift: 0,
+        bits: 2,
+        limit: 3
+    }
+}
+
+function getHexRGBA(c, raw=false){
+    let r = color.r.shift < 0 ? 255 : ((c >> color.r.shift) & color.r.limit) * Math.round(255 / color.r.limit)
+    let g = color.g.shift < 0 ? 255 : ((c >> color.g.shift) & color.g.limit) * Math.round(255 / color.g.limit)
+    let b = color.b.shift < 0 ? 255 : ((c >> color.b.shift) & color.b.limit) * Math.round(255 / color.b.limit)
+    let a = color.a.shift < 0 ? 255 : ((c >> color.a.shift) & color.a.limit) * Math.round(255 / color.a.limit)
+
+    if(raw){
+        return ((r << 24) + (g << 16) + (b << 8) + a ) >>> 0
+    }
+    return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}${a.toString(16).padStart(2, "0")}`
+}
+
+function getRGBAHex(r, g, b, a){
+    let rb = (Math.round(r / Math.round(255 / color.r.limit)) & color.r.limit) << color.r.shift
+    let gb = (Math.round(g / Math.round(255 / color.g.limit)) & color.g.limit) << color.g.shift
+    let bb = (Math.round(b / Math.round(255 / color.b.limit)) & color.b.limit) << color.b.shift
+    let ab = (Math.round(a / Math.round(255 / color.a.limit)) & color.a.limit) << color.a.shift
+    return rb | gb | bb | ab
+}
 
 class Screen{
     constructor(width, height, wchars, hchars, node){
@@ -34,17 +76,39 @@ class Screen{
 
         this.canvas.imageSmoothingEnabled = false
 
-        this.img = new Image
-        this.img.src = './assets/default_font.png'
+        this.img = new Image()
+        //this.img.setAttribute('crossOrigin', '')
+        /*this.img.onload = () => {
+            this.fontcanvas = document.createElement('canvas')
+            this.fontcanvas.getContext('2d').drawImage(this.img, 0, 0)
+        }*/
 
+        this.img.setAttribute('crossOrigin', 'Anonymous')
+        this.img.onload = () => {
+            let fontcanvas = document.createElement('canvas')
+
+            fontcanvas.width = this.img.width
+            fontcanvas.height = this.img.height
+            let fontctx = fontcanvas.getContext('2d')
+            fontctx.drawImage(this.img, 0, 0)
+    
+            this.imgdata = fontctx.getImageData(0, 0, this.img.width, this.img.height).data
+        }
+        this.img.src = "./assets/default_font.png"
+        
+        let tcanvas = document.createElement('canvas')
+        tcanvas.width = this.img.width / 16
+        tcanvas.height = this.img.height / 16
+        this.tctx = tcanvas.getContext('2d')
     }
 
-    async character(x, y, char, color='white', bgcolor='black'){
-        
-        //console.error(x, y, char, pc)
+    async character(x, y, char, color=0xffffffff, bgcolor=0x000000ff){
 
         let charwidth = this.width / this.wchars
         let charheight = this.height / this.hchars
+
+        let clr = [(color & 0xff000000) >>> 24, (color & 0xff0000) >>> 16, (color & 0xff00) >>> 8, color & 0xff >>> 0]
+        //let bgc = [(bgcolor & 0xff000000) >> 24, (bgcolor & 0xff00) >> 16, (bgcolor & 0xff0000) >> 8, bgcolor & 0xff]
 
         let charnum
         if(typeof(char) == String){
@@ -54,21 +118,40 @@ class Screen{
         }
 
         let imgX = (charnum % 16) * 8
-        let imgY = ((charnum - (charnum % 16)) / 16) * 8
-
+        let imgY = ((charnum - (charnum % 16)) / 16) * 8        
+        
         this.canvas.fillStyle = bgcolor
         this.canvas.fillRect(x * charwidth, y * charheight, charwidth, charheight)
-        this.canvas.fillStyle=color
-        this.canvas.drawImage(this.img, imgX, imgY, this.img.width / 16, this.img.height / 16, x*charwidth, y*charheight, charwidth, charheight)
+        if(color == 0xffffffff | color == "#ffffffff"){
+            this.canvas.fillStyle=color
+            this.canvas.drawImage(this.img, imgX, imgY, this.img.width / 16, this.img.height / 16, x*charwidth, y*charheight, charwidth, charheight)
+        }else{
+            let rawdata = new Array()
+            for(let i = 0; i < this.img.width / 16; i++){
+                for(let j = 0; j < this.img.height / 16; j++){
+                    let c = 4*(imgX + imgY*this.img.width) + (j + i*this.img.width)*4
+                    rawdata.push(this.imgdata[c] & clr[0])
+                    rawdata.push(this.imgdata[c + 1] & clr[1])
+                    rawdata.push(this.imgdata[c + 2] & clr[2])
+                    rawdata.push(this.imgdata[c + 3] & clr[3])
+                }
+            }
+            let imgdatanew = new ImageData(new Uint8ClampedArray(rawdata), this.img.width / 16, this.img.height / 16)
+            this.tctx.putImageData(imgdatanew, 0, 0)
+
+            this.canvas.drawImage(this.tctx.canvas, x * charwidth, y * charheight, charwidth, charheight)
+        }
+
     }
 
-    async dot(x, y, color='white'){
-        //console.log(x, y)
+    async dot(x, y, color='white', bgcolor='transparent'){
         this.canvas.fillStyle = color
         this.canvas.fillRect(x, y, 1, 1)
     }
 
     async plot(x, y, char, color="white", bgcolor="transparent"){
+
+        let clr = [(color & 0xff000000) >>> 24, (color & 0xff0000) >>> 16, (color & 0xff00) >>> 8, color & 0xff >>> 0]
 
         let charnum
         if(typeof(char) == String){
@@ -88,9 +171,26 @@ class Screen{
         let imgY = ((charnum - (charnum % 16)) / 16) * 8
         
         this.canvas.fillStyle = bgcolor
-        this.canvas.fillRect(x * charwidth, y * charheight, charwidth, charheight)
-        this.canvas.fillStyle=color
-        this.canvas.drawImage(this.img, imgX, imgY, this.img.width / 16, this.img.height / 16, x, y, charwidth, charheight)
+        this.canvas.fillRect(x, y, charwidth, charheight)
+        if(color == 0xffffffff | color == "#ffffffff"){
+            this.canvas.fillStyle=color
+            this.canvas.drawImage(this.img, imgX, imgY, this.img.width / 16, this.img.height / 16, x*charwidth, y*charheight, charwidth, charheight)
+        }else{
+            let rawdata = new Array()
+            for(let i = 0; i < this.img.width / 16; i++){
+                for(let j = 0; j < this.img.height / 16; j++){
+                    let c = 4*(imgX + imgY*this.img.width) + (j + i*this.img.width)*4
+                    rawdata.push(this.imgdata[c] & clr[0])
+                    rawdata.push(this.imgdata[c + 1] & clr[1])
+                    rawdata.push(this.imgdata[c + 2] & clr[2])
+                    rawdata.push(this.imgdata[c + 3] & clr[3])
+                }
+            }
+            let imgdatanew = new ImageData(new Uint8ClampedArray(rawdata), this.img.width / 16, this.img.height / 16)
+            this.tctx.putImageData(imgdatanew, 0, 0)
+
+            this.canvas.drawImage(this.tctx.canvas, x, y, charwidth, charheight)
+        }
     }
 
     async clear(){
@@ -106,6 +206,8 @@ function create(databus, addressbus, code, screenwidth, screenheight, screenwidt
     pregs = Array(32).fill(0)
     flags = Array(32).fill(0)
 
+    pregs[PREGS.$FCOLOR] = getRGBAHex(255, 255, 255, 255)
+    pregs[PREGS.$BGCOLOR] = getRGBAHex(0, 0, 0, 255)
 
     monitor = new Screen(screenwidth, screenheight,
         screenwidthchars, screenheightchars, "screen")
@@ -150,6 +252,7 @@ function set(type, address, value, doUpdateFlags){
         case TYPE.PREG:
             //if(address == PREGS.$KB) console.log(value)
             pregs[address] = value & DL
+            
             break;
         case TYPE.FLAG:
             flags[address & 31] = value
@@ -178,7 +281,6 @@ function get(type, address){
 function perform(){
     if(code.lenght < 1) return -1
     //if(pc < 0) return -1
-    if(pc === NaN) return -1
     if(pc >= code.length) return -1
 
     pregs[PREGS.$RANDOM] = Math.floor(Math.random() * DL)
@@ -236,20 +338,16 @@ function perform(){
         case OP.JNG: if(get(...args[0]) <= get(...args[1])) pc = get(...args[2]) - 1; break;
         case OP.JNS: if(get(...args[0]) >= get(...args[1])) pc = get(...args[2]) - 1; break;
         
-        case OP.EXT: pc = NaN; return; break;
+        case OP.EXT: clearInterval(interval); pc = 0; isRunning = false; break;
         case OP.PRINT: console.log(">>>", get(...args[0]), get(...args[1]), get(...args[2])); break;
         
-        case OP.PNT: monitor.character(get(...args[0]), get(...args[1]), get(...args[2])); break;
+        case OP.PNT:
+            monitor.character(get(...args[0]), get(...args[1]), get(...args[2]),
+            getHexRGBA(pregs[PREGS.$FCOLOR], true), getHexRGBA(pregs[PREGS.$BGCOLOR], false)); break;
         case OP.PLT:
-            let c = get(...args[2])
-            monitor.dot(get(...args[0]), get(...args[1]), "#" +
-            (((
-                ( ( ((c & 0b11000000) >>> 6) * 85 ) <<24)
-                |( ( ((c & 0b00110000) >>> 4) * 85 ) <<16)
-                |( ( ((c & 0b00001100) >> 2) * 85 ) <<8)
-                |( ( (c & 0b00000011) * 85 ) )
-            ) & 0x00000000FFFFFFFF)>>>0).toString(16).padStart(8, '0')); break;
-        case OP.PTL: monitor.plot(get(...args[0]), get(...args[1]), get(...args[2])); break;
+            monitor.dot(get(...args[0]), get(...args[1]), getHexRGBA(get(...args[2]))); break;
+        case OP.PTL: monitor.plot(get(...args[0]), get(...args[1]), get(...args[2]),
+        getHexRGBA(pregs[PREGS.$FCOLOR], true), getHexRGBA(pregs[PREGS.$BGCOLOR], false)); break;
         
         case OP.RSH: set(args[2][0], args[2][1], get(...args[0]) >> get(...args[1]), true); break;
         case OP.LSH: set(args[2][0], args[2][1], get(...args[0]) << get(...args[1]), true); break;
@@ -257,7 +355,7 @@ function perform(){
         case OP.LNP: break;
         case OP.MNP: update_flags(0); break;
     }
-    
+
     pc++
 
     return

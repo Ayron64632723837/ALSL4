@@ -3,15 +3,16 @@
     <title>ASLS</title>
 
     <link rel="stylesheet" href="styles.css">
-
     
     <script src="exports.js"></script>
     <script src="lexer.js"></script>
     <script src="emulator.js"></script>
+    <script src="external.js"></script>
+    <script src="convertcode.js"></script>
 </head>
 <body>
 
-    <canvas id="screen" style="background-color: black; width: 512px; height: 512px;" tabindex="0"></canvas>
+    <canvas id="screen" style="background-color: black; width: 512px; height: 512px; image-rendering: pixelated;" tabindex="0"></canvas>
     <script>
         document.getElementById("screen").addEventListener("keydown", function(e) {
             e.preventDefault();
@@ -35,6 +36,8 @@
 
         isRunning = true
 
+        isWorking = true
+
         let raw = editor.getValue().replace('\r', '')
 
         code = lex(raw)
@@ -56,6 +59,7 @@
 
     let last_interval = performance.now();
 
+    clearInterval(interval)
     interval = setInterval(f => {
         const now = performance.now();
         const dt = now - last_interval;
@@ -67,8 +71,8 @@
             perform();
         }
     }, 1000/ips)">Start</button>
-    <button class="button" onclick="clearInterval(interval); pc = -1; isRunning = false">Stop</button>
-    <button class="button" onclick="clearInterval(interval);">Pause</button>
+    <button class="button" onclick="if(isWorking && isRunning){clearInterval(interval); pc = NaN; isRunning = false}">Stop</button>
+    <button class="button" onclick="if(isWorking){clearInterval(interval); isWorking = false;}">Pause</button>
     
     <buttom class="button" onclick="
     var input = document.createElement('input')
@@ -228,16 +232,116 @@
                         </th>
                     </tr>
                     <tr>
+                        <th>Color model</th>
+                        <th>
+                            <input value="RRGGBBAA", id="colormodel" title="Takes only R, G, B and A symbols in any case. Any order, but no separating between each type of data(RRGRBAA isn't allowed, i.e. will cause bugs)" type="text">
+                        </th>
+                    </tr>
+                    <tr>
                         <th></th>
                         <th>
-                            <button class="button" style="width: 100%" onclick="
+                            <button class="button" style="width: 65%; margin-left: 35%" onclick="
                             document.getElementById('screen').style
                                 .width = document.getElementById('swpx').value
-                                .height = document.getElementById('shpx').value">Apply</button>
+                                .height = document.getElementById('shpx').value
+                            
+                            let s = document.getElementById('colormodel').value.toLowerCase()
+                            color = {
+                                r: {
+                                    shift: s.length - s.lastIndexOf('r') - 1,
+                                    bits: s.lastIndexOf('r') - s.indexOf('r') + 1,
+                                    limit: 2**(s.lastIndexOf('r') - s.indexOf('r') + 1) - 1
+                                },
+                                g: {
+                                    shift: s.length - s.lastIndexOf('g') - 1,
+                                    bits: s.lastIndexOf('g') - s.indexOf('g') + 1,
+                                    limit: 2**(s.lastIndexOf('g') - s.indexOf('g') + 1) - 1
+                                },
+                                b: {
+                                    shift: s.length - s.lastIndexOf('b') - 1,
+                                    bits: s.lastIndexOf('b') - s.indexOf('b') + 1,
+                                    limit: 2**(s.lastIndexOf('b') - s.indexOf('b') + 1) - 1
+                                },
+                                a: {
+                                    shift: s.length - s.lastIndexOf('a') - 1,
+                                    bits: s.lastIndexOf('a') - s.indexOf('a') + 1,
+                                    limit: 2**(s.lastIndexOf('a') - s.indexOf('a') + 1) - 1
+                                }
+                            }
+                            if(s.indexOf('r') == -1) color.r.shift = -1
+                            if(s.indexOf('g') == -1) color.g.shift = -1
+                            if(s.indexOf('b') == -1) color.b.shift = -1
+                            if(s.indexOf('a') == -1) color.a.shift = -1
+                            
+                            ">Apply</button>
                         </th>
                     </tr>
                 </table>
             </th>
+            <!--th style="vertical-align: top;">
+                <div class="box" style="height: calc(100% + 10em)">
+                    <p style="text-align: center; text-decoration: underline; font-size: 1.2em; margin: 0;" colspan="2">Ports</p>
+                    <div class="port">
+                        <table>
+                            <div style="margin-top: 0.4em; margin-bottom: 0.4em">
+                                <p style="margin: 0; font-size: 1.2em; margin-bottom: 0.4em; margin-left: 0.5em; width: 80%; display: inline;"></p>
+                                <button data-folded="0" style="display: inline; float: right; vertical-align: top; background: transparent;" onclick="
+                                console.log(this.parentNode.parentNode.children)
+
+                                for(let i of this.parentNode.parentNode.children){
+                                    if(i.className == 'portsettings'){
+                                        console.log(this.dataset.folded)
+                                        i.style.visibility = this.dataset.folded == '1' ? 'visible' : 'collapse'
+                                        this.innerHTML = this.dataset.folded == '1' ? 'v' : '>'
+                                        this.dataset.folded = this.dataset.folded == '0' ? '1' : '0'
+                                        break
+                                    }
+                                }
+                                ">v</button>
+                            </div>
+                        </table>
+                        <table class="portsettings" style="visibility: visible;">
+                            <tr>
+                                <th>Name </th><th><input type="text" onchange="
+                                    let label = this.parentNode.parentNode.parentNode.parentNode.parentNode.children[0].children[0]
+                                    portChange.name(label.innerHTML, this.value)
+                                    label.innerHTML = this.value
+                                    "></th>
+                            </tr>
+                            <tr>
+                                <th>Type </th><th><select class="selection">
+                                    <option value="0">Simple Disk</option>
+                                    <option value="1">Disk</option>
+                                    </select>
+                                </th>
+                            </tr>
+                            <tr id="dbus">
+                                <th>Data bus size(bits) </th><th><input type="number" min="1" max="512" onchange="
+                                    let label = this.parentNode.parentNode.parentNode.children[0].children[1].children[0]
+                                    portChange.variable(label.value, 0, this.value)"></th>
+                            </tr>
+                            <tr id="abus">
+                                <th>Address bus size(bits) </th><th><input type="number" min="1" max="512" onchange="
+                                    let label = this.parentNode.parentNode.parentNode.children[0].children[1].children[0]
+                                    portChange.variable(label.value, 1, this.value)"></th>
+                            </tr>
+                            <tr id="pbus">
+                                <th>Pages bus size(bits) </th><th><input type="number" min="1" max="512" onchange="
+                                    let label = this.parentNode.parentNode.parentNode.children[0].children[1].children[0]
+                                    portChange.variable(label.value, 2, this.value)"></th>
+                            </tr>
+                            <tr id="saveload">
+                                <th colspan="2"><button class="button" id="load">Load</button>
+                                <button class="button" id="save">Save</button>
+                                <button class="button" id="clear">Clear</button>
+                                <button class="button" style="float: right;">Delete port</button></th>
+                            </tr>
+                        </table>
+                    </div>
+                    <button class="button" style="width: 35%; float: left; margin: 10pxs;" onclick="">Add port</button>
+                    <button class="button" style="width: 35%; float: right;" onclick="">Apply</button>
+                </div>
+            </th-->
         </tr>
     </table>
 
