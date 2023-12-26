@@ -130,7 +130,8 @@ class Screen{
         }else{
             let rawdata = new Array()
             let c = 4*(imgX + imgY*this.img.width)
-            for(let i = 0; i/4 < this.img.width**2 / 16 + this.img.width; i+=4){
+            let cond = (this.img.width**2 / 16 + this.img.height)*4
+            for(let i = 0; i < cond; i+=4){
                 rawdata.push(this.imgdata[c + i] & clr[0])
                 rawdata.push(this.imgdata[c + 1 + i] & clr[1])
                 rawdata.push(this.imgdata[c + 2 + i] & clr[2])
@@ -178,7 +179,8 @@ class Screen{
         }else{
             let rawdata = new Array()
             let c = 4*(imgX + imgY*this.img.width)
-            for(let i = 0; i/4 < this.img.width**2 / 16 + this.img.width; i+=4){
+            let cond = (this.img.width**2 / 16 + this.img.height)*4
+            for(let i = 0; i < cond; i+=4){
                 rawdata.push(this.imgdata[c + i] & clr[0])
                 rawdata.push(this.imgdata[c + 1 + i] & clr[1])
                 rawdata.push(this.imgdata[c + 2 + i] & clr[2])
