@@ -132,12 +132,12 @@ class Screen{
             let c = 4*(imgX + imgY*this.img.width)
             for(let i = 0; i < this.img.width / 16; i++){
                 for(let j = 0; j < this.img.height / 16; j++){
+                    let cp = c + (j + i*this.img.width)*4
                     if(this.imgData[cp + 3] == 0){
                         rawdata.push(0,0,0,0)
                         continue
                     }
                     
-                    let cp = c + (j + i*this.img.width)*4
                     rawdata.push(this.imgdata[cp] & clr[0])
                     rawdata.push(this.imgdata[cp + 1] & clr[1])
                     rawdata.push(this.imgdata[cp + 2] & clr[2])
@@ -188,12 +188,12 @@ class Screen{
             let c = 4*(imgX + imgY*this.img.width)
             for(let i = 0; i < this.img.width / 16; i++){
                 for(let j = 0; j < this.img.height / 16; j++){
+                    let cp = c + (j + i*this.img.width)*4
                     if(this.imgData[cp + 3] == 0){
                         rawdata.push(0,0,0,0)
                         continue
                     }
                     
-                    let cp = c + (j + i*this.img.width)*4
                     rawdata.push(this.imgdata[cp] & clr[0])
                     rawdata.push(this.imgdata[cp + 1] & clr[1])
                     rawdata.push(this.imgdata[cp + 2] & clr[2])
