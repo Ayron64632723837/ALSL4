@@ -137,6 +137,7 @@ class Screen{
                 rawdata.push(this.imgdata[c + 2 + i] & clr[2])
                 rawdata.push(this.imgdata[c + 3 + i] & clr[3])
             }
+            console.log(c, cond, rawdata);
             let imgdatanew = new ImageData(new Uint8ClampedArray(rawdata), this.img.width / 16, this.img.height / 16)
             this.tctx.putImageData(imgdatanew, 0, 0)
 
