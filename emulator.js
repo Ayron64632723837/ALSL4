@@ -129,13 +129,16 @@ class Screen{
             this.canvas.drawImage(this.img, imgX, imgY, this.img.width / 16, this.img.height / 16, x*charwidth, y*charheight, charwidth, charheight)
         }else{
             let rawdata = new Array()
+            let c = 4*(imgX + imgY*this.img.width)
             for(let i = 0; i < this.img.width / 16; i++){
                 for(let j = 0; j < this.img.height / 16; j++){
-                    let c = 4*(imgX + imgY*this.img.width) + (j + i*this.img.width)*4
-                    rawdata.push(this.imgdata[c] & clr[0])
-                    rawdata.push(this.imgdata[c + 1] & clr[1])
-                    rawdata.push(this.imgdata[c + 2] & clr[2])
-                    rawdata.push(this.imgdata[c + 3] & clr[3])
+                    if(this.imgData[cp + 3] == 0) continue;
+                    
+                    let cp = c + (j + i*this.img.width)*4
+                    rawdata.push(this.imgdata[cp] & clr[0])
+                    rawdata.push(this.imgdata[cp + 1] & clr[1])
+                    rawdata.push(this.imgdata[cp + 2] & clr[2])
+                    rawdata.push(this.imgdata[cp + 3] & clr[3])
                 }
             }
             let imgdatanew = new ImageData(new Uint8ClampedArray(rawdata), this.img.width / 16, this.img.height / 16)
@@ -179,13 +182,16 @@ class Screen{
             this.canvas.drawImage(this.img, imgX, imgY, this.img.width / 16, this.img.height / 16, x*charwidth, y*charheight, charwidth, charheight)
         }else{
             let rawdata = new Array()
+            let c = 4*(imgX + imgY*this.img.width)
             for(let i = 0; i < this.img.width / 16; i++){
                 for(let j = 0; j < this.img.height / 16; j++){
-                    let c = 4*(imgX + imgY*this.img.width) + (j + i*this.img.width)*4
-                    rawdata.push(this.imgdata[c] & clr[0])
-                    rawdata.push(this.imgdata[c + 1] & clr[1])
-                    rawdata.push(this.imgdata[c + 2] & clr[2])
-                    rawdata.push(this.imgdata[c + 3] & clr[3])
+                    if(this.imgData[cp + 3] == 0) continue;
+                    
+                    let cp = c + (j + i*this.img.width)*4
+                    rawdata.push(this.imgdata[cp] & clr[0])
+                    rawdata.push(this.imgdata[cp + 1] & clr[1])
+                    rawdata.push(this.imgdata[cp + 2] & clr[2])
+                    rawdata.push(this.imgdata[cp + 3] & clr[3])
                 }
             }
             let imgdatanew = new ImageData(new Uint8ClampedArray(rawdata), this.img.width / 16, this.img.height / 16)
