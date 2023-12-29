@@ -40,7 +40,8 @@
 
         let raw = editor.getValue().replace('\r', '')
 
-        code = lex(raw)
+        let data = lex(raw)
+        code = data[0]
 
         dbl = Number(document.getElementById('dbs').value)
         abl = Number(document.getElementById('abs').value)
@@ -52,7 +53,7 @@
 
         pc = 0
 
-        create(dbl, abl, null, sw=sw, sh=sh, swc=swc, shc=shc)
+        create(dbl, abl, null, sw=sw, sh=sh, swc=swc, shc=shc, data[1])
     }
     
     ips = Number(document.getElementById('speed').value)
