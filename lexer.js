@@ -91,7 +91,8 @@ function lex(rawCode){
             }else if(parsable[0] == "("){
                 val = parseArray(parsable, true)
             }else if(parsable[0] == '"'|parsable[0] == "'"){
-                for(let c of parsable.slice(1, -1)){
+                let p = i.trim().substring(i.indexOf(' ') + 1).trim()
+                for(let c of p.slice(1, -1)){
                     val.push(c.charCodeAt(0))
                 }
             }else if(parsable[0] == "."){
