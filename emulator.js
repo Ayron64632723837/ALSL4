@@ -213,8 +213,12 @@ class Screen{
 }
 
 
-function create(databus, addressbus, code, screenwidth, screenheight, screenwidthchars, screenheightchars){
+function create(databus, addressbus, code, screenwidth, screenheight, screenwidthchars, screenheightchars, conmem){
     ram = Array(2**addressbus).fill(0)
+    let l = Math.min(2**addressbus, conmem.length)
+    for(let i = 0; i < l; i++){
+        ram[i] = conmem[i]
+    }
     stack = Array(2**addressbus).fill(0)
     funcstack = Array(2**addressbus).fill(0)
     pregs = Array(32).fill(0)
