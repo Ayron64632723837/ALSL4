@@ -54,6 +54,7 @@ function lex(rawCode){
     points = {};
 
     code = []
+    memory = []
 
     for(let i of rawCode.split(/\r?\n/)){
         let str = i.trimStart().split(" ");
@@ -71,6 +72,46 @@ function lex(rawCode){
         }
         else if(str[0].toLowerCase() == "const"){
             consts[str[1].toUpperCase()] = parseArgument(str[2])[1];
+        }
+        else if(str[0].toLowerCase() == "dw"){
+            let nstr = i.trim().substring(i.indexOf(' ') + 1).replace( /\s\s+/g, ' ' ).trim()
+            nstr = nstr.split('').reverse().join("")
+            let data = [nstr.substring(0, nstr.indexOf(' ')).split('').reverse().join(""), 
+                        nstr.substring(nstr.indexOf(' ') + 1)].reverse()
+            let parsable
+            if(data[1].slice(0, 2) == "@!"){
+                parsable = data[0].split('').reverse().join("")
+                consts[data[1].toUpperCase()] = memory.length
+            }else{
+                parsable = i.trimStart().split(" ", 2)[1].replace( /\s\s+/g, ' ' ).trim()
+            }
+            let val = []
+            if(parsable[0] == "("){
+                val = parseArray(parsable, true)
+            }else if(parsable[0] == '"'|parsable[0] == "'"){
+                for(let c of parsable.slice(1, -1)){
+                    val.push(c.charCodeAt(0))
+                }
+            }else if(parsable[0] == "."){
+                val = points[parsable] | 0
+            }else if(parsable.slice(0, 2) == "@!"){
+                val = consts[parsable] | 0
+            }else if(/^-?[0-9]+$/i.test(parsable)){
+                val.push(Number(parsable))
+            }else if(/^-?\b(h|0x)[0-9a-f]+$/i.test(parsable)){
+                val.push(Number(parsable.toLowerCase().replace("h", "0x")))
+            }else if(/^-?\b(b|0b)[01]+$/i.test(parsable)){
+                if(parsable[0] == "b"){parsable = parsable.replace("b", "0b")}
+                val.push(Number(value.toLowerCase()))
+            }else if(parsable[0] == "~"){
+                let nextline = parsable.slice(1)
+                try{
+                    val.push(step + Number(nextline))
+                }catch{
+                    val.push(0, step + 1)
+                }
+            }
+            memory = memory.concat(val)
         }
 
         else if(str[0].toUpperCase() in OP){
@@ -139,8 +180,7 @@ function lex(rawCode){
             continue
         }
     }
-
-    return code
+    return [code, memory]
 }
 
 function parseArgument(value){
