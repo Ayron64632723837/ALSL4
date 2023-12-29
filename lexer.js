@@ -74,7 +74,7 @@ function lex(rawCode){
             consts[str[1].toUpperCase()] = parseArgument(str[2])[1];
         }
         else if(str[0].toLowerCase() == "dw"){
-            let nstr = i.trim().substring(i.indexOf(' ') + 1).replace( /\s\s+/g, ' ' ).trim()
+            let nstr = i.trim().substring(i.indexOf(' ') + 1).trim()
             nstr = nstr.split('').reverse().join("")
             let data = [nstr.substring(0, nstr.indexOf(' ')).split('').reverse().join(""), 
                         nstr.substring(nstr.indexOf(' ') + 1)].reverse()
@@ -83,7 +83,7 @@ function lex(rawCode){
                 parsable = data[0].split('').reverse().join("")
                 consts[data[1].toUpperCase()] = memory.length
             }else{
-                parsable = i.trimStart().split(" ", 2)[1].replace( /\s\s+/g, ' ' ).trim()
+                parsable = i.trimStart().split(" ", 2)[1].trim()
             }
             let val = []
             if(parsable == "-"){
@@ -91,8 +91,7 @@ function lex(rawCode){
             }else if(parsable[0] == "("){
                 val = parseArray(parsable, true)
             }else if(parsable[0] == '"'|parsable[0] == "'"){
-                let p = i.trim().substring(i.indexOf(' ') + 1).trim()
-                for(let c of p.slice(1, -1)){
+                for(let c of parsable.slice(1, -1)){
                     val.push(c.charCodeAt(0))
                 }
             }else if(parsable[0] == "."){
