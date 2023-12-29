@@ -86,7 +86,9 @@ function lex(rawCode){
                 parsable = i.trimStart().split(" ", 2)[1].replace( /\s\s+/g, ' ' ).trim()
             }
             let val = []
-            if(parsable[0] == "("){
+            if(parsible == "-"){
+                
+            }else if(parsable[0] == "("){
                 val = parseArray(parsable, true)
             }else if(parsable[0] == '"'|parsable[0] == "'"){
                 for(let c of parsable.slice(1, -1)){
