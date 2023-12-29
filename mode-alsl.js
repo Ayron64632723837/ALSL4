@@ -105,7 +105,7 @@ var ALSLHighlightRules = function () {
                 caseInsensitive: true
             },{
                 token: 'token keyword humanic',
-                regex: /\b(var|const|print)\b/,
+                regex: /\b(var|const|print|dw)\b/,
                 caseInsensitive: true
             },{
                 token: 'token keyword screen',
