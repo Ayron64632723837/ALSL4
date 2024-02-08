@@ -14,6 +14,8 @@ AL = 0xff
 
 DS = 8
 
+shifts = []
+
 isRunning = false
 interval = null
 
@@ -257,7 +259,10 @@ function update_flags(value){
     console.log(flags[6], "overflow")*/
 }
 
-function set(type, address, value, doUpdateFlags){
+function set(args, index, value, doUpdateFlags){
+    arg = args[index]
+    type = args[0]
+    address = args[1] + shifts[index]
     switch(type){
         case TYPE.CONST:
             ram[ram[address & AL]] = value & DL
@@ -286,7 +291,10 @@ function set(type, address, value, doUpdateFlags){
     return true;
 }
 
-function get(type, address){
+function get(args, index){
+    arg = args[index]
+    type = arg[0]
+    address = arg[1] + shifts[index]
     switch(type){
         case TYPE.REG: return ram[address & AL]
         case TYPE.CONST: return address
@@ -323,56 +331,58 @@ function perform(){
 */
 
     switch(code[pc][0]){
-        case OP.ADD: set(args[2][0], args[2][1], get(...args[0]) + get(...args[1]), true); break;
-        case OP.SUB: set(args[2][0], args[2][1], get(...args[0]) - get(...args[1]), true); break;
-        case OP.MLL: set(args[2][0], args[2][1], get(...args[0]) * get(...args[1]), true); break;
+        case OP.ADD: set(args. 2, get(args, 0) + get(args, 1), true); break;
+        case OP.SUB: set(args. 2, get(args, 0) - get(args, 1), true); break;
+        case OP.MLL: set(args. 2, get(args, 0) * get(args, 1), true); break;
         case OP.MUL:
-            set(args[2][0], args[2][1], get(...args[0]) * get(...args[1]), true)
-            set(args[2][0], args[2][1] + 1, get(...args[0]) * get(...args[1]) >>> DS, false); break;
-        case OP.DVV: set(args[2][0], args[2][1], Math.floor(get(...args[0]) / get(...args[1])), true); break;
-        case OP.MOD: set(args[2][0], args[2][1], get(...args[0]) % get(...args[1]), true); break;
+            set(args. 2, get(args, 0) * get(args, 1), true)
+            set(args[2][0], args[2][1] + 1, get(args, 0) * get(args, 1) >>> DS, false); break;
+        case OP.DVV: set(args. 2, Math.floor(get(args, 0) / get(args, 1)), true); break;
+        case OP.MOD: set(args. 2, get(args, 0) % get(args, 1), true); break;
 
-        case OP.AND: set(args[2][0], args[2][1], get(...args[0]) & get(...args[1]), true); break;
-        case OP.NND: set(args[2][0], args[2][1], ~(get(...args[0]) & get(...args[1])), true); break;
-        case OP.BOR: set(args[2][0], args[2][1], get(...args[0]) | get(...args[1]), true); break;
-        case OP.NOR: set(args[2][0], args[2][1], ~(get(...args[0]) | get(...args[1])), true); break;
-        case OP.XOR: set(args[2][0], args[2][1], get(...args[0]) ^ get(...args[1]), true); break;
-        case OP.NXR: set(args[2][0], args[2][1], ~(get(...args[0]) ^ get(...args[1])), true); break;
-        case OP.INV: set(args[1][0], args[1][1], ~get(...args[0]), true); break;
+        case OP.AND: set(args. 2, get(args, 0) & get(args, 1), true); break;
+        case OP.NND: set(args. 2, ~(get(args, 0) & get(args, 1)), true); break;
+        case OP.BOR: set(args. 2, get(args, 0) | get(args, 1), true); break;
+        case OP.NOR: set(args. 2, ~(get(args, 0) | get(args, 1)), true); break;
+        case OP.XOR: set(args. 2, get(args, 0) ^ get(args, 1), true); break;
+        case OP.NXR: set(args. 2, ~(get(args, 0) ^ get(args, 1)), true); break;
+        case OP.INV: set(args[1][0], args[1][1], ~get(args, 0), true); break;
 
-        case OP.SET: set(args[0][0], args[0][1], get(...args[1])); break;
-        case OP.MOV: set(args[0][0], args[0][1], get(...args[1])); set(args[1][0], args[1][1], 0); break;
-        case OP.CPY: set(args[0][0], args[0][1], get(...args[1])); break;
+        case OP.SET: set(args. 0, get(args, 1)); break;
+        case OP.MOV: set(args. 0, get(args, 1)); set(args[1][0], args[1][1], 0); break;
+        case OP.CPY: set(args. 0, get(args, 1)); break;
 
-        case OP.JMP: pc = get(...args[0]) - 1; break;
-        case OP.JIE: if(get(...args[0]) == get(...args[1])) pc = get(...args[2]) - 1; break;
-        case OP.JNE: if(get(...args[0]) != get(...args[1])) pc = get(...args[2]) - 1; break;
-        case OP.JEZ: if(get(...args[0]) == 0) pc = get(...args[1]) - 1; break;
-        case OP.JNZ: if(get(...args[0]) != 0) pc = get(...args[1]) - 1; break;
-        case OP.JWR: fsp ++; funcstack[fsp & AL] = (pc + 1) & DL; pc = get(...args[0]) - 1; break;
+        case OP.JMP: pc = get(args, 0) - 1; break;
+        case OP.JIE: if(get(args, 0) == get(args, 1)) pc = get(args, 2) - 1; break;
+        case OP.JNE: if(get(args, 0) != get(args, 1)) pc = get(args, 2) - 1; break;
+        case OP.JEZ: if(get(args, 0) == 0) pc = get(args, 1) - 1; break;
+        case OP.JNZ: if(get(args, 0) != 0) pc = get(args, 1) - 1; break;
+        case OP.JWR: fsp ++; funcstack[fsp & AL] = (pc + 1) & DL; pc = get(args, 0) - 1; break;
         case OP.RTN: pc = (funcstack[fsp & AL] - 1) & DL; fsp --; break;
         
-        case OP.JIG: if(get(...args[0]) > get(...args[1])) pc = get(...args[2]) - 1; break;
-        case OP.JIS: if(get(...args[0]) < get(...args[1])) pc = get(...args[2]) - 1; break;
-        case OP.JNG: if(get(...args[0]) <= get(...args[1])) pc = get(...args[2]) - 1; break;
-        case OP.JNS: if(get(...args[0]) >= get(...args[1])) pc = get(...args[2]) - 1; break;
+        case OP.JIG: if(get(args, 0) > get(args, 1)) pc = get(args, 2) - 1; break;
+        case OP.JIS: if(get(args, 0) < get(args, 1)) pc = get(args, 2) - 1; break;
+        case OP.JNG: if(get(args, 0) <= get(args, 1)) pc = get(args, 2) - 1; break;
+        case OP.JNS: if(get(args, 0) >= get(args, 1)) pc = get(args, 2) - 1; break;
         
         case OP.EXT: clearInterval(interval); pc = 0; isRunning = false; break;
-        case OP.PRINT: console.log(">>>", get(...args[0]), get(...args[1]), get(...args[2])); break;
+        case OP.PRINT: console.log(">>>", get(args, 0), get(args, 1), get(args, 2)); break;
         
         case OP.PNT:
-            monitor.character(get(...args[0]), get(...args[1]), get(...args[2]),
+            monitor.character(get(args, 0), get(args, 1), get(args, 2),
             getHexRGBA(pregs[PREGS.$FCOLOR], true), getHexRGBA(pregs[PREGS.$BGCOLOR], false)); break;
         case OP.PLT:
-            monitor.dot(get(...args[0]), get(...args[1]), getHexRGBA(get(...args[2]))); break;
-        case OP.PTL: monitor.plot(get(...args[0]), get(...args[1]), get(...args[2]),
+            monitor.dot(get(args, 0), get(args, 1), getHexRGBA(get(args, 2))); break;
+        case OP.PTL: monitor.plot(get(args, 0), get(args, 1), get(args, 2),
         getHexRGBA(pregs[PREGS.$FCOLOR], true), getHexRGBA(pregs[PREGS.$BGCOLOR], false)); break;
         
-        case OP.RSH: set(args[2][0], args[2][1], get(...args[0]) >> get(...args[1]), true); break;
-        case OP.LSH: set(args[2][0], args[2][1], get(...args[0]) << get(...args[1]), true); break;
+        case OP.RSH: set(args. 2, get(args, 0) >> get(args, 1), true); break;
+        case OP.LSH: set(args. 2, get(args, 0) << get(args, 1), true); break;
         
         case OP.LNP: break;
         case OP.MNP: update_flags(0); break;
+
+        case OP.OSH: shifts = [get(args, 0), get(args, 1), get(args, 2)]; break;
     }
 
     pc++
