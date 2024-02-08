@@ -346,7 +346,7 @@ function perform(){
         case OP.NOR: set(args, 2, ~(get(args, 0) | get(args, 1)), true); break;
         case OP.XOR: set(args, 2, get(args, 0) ^ get(args, 1), true); break;
         case OP.NXR: set(args, 2, ~(get(args, 0) ^ get(args, 1)), true); break;
-        case OP.INV: set(args[1][0], args[1][1], ~get(args, 0), true); break;
+        case OP.INV: set(args, 1, ~get(args, 0), true); break;
 
         case OP.SET: set(args, 0, get(args, 1)); break;
         case OP.MOV: set(args, 0, get(args, 1)); set(args[1][0], args[1][1], 0); break;
@@ -382,10 +382,10 @@ function perform(){
         case OP.LNP: break;
         case OP.MNP: update_flags(0); break;
 
-        case OP.OSH: shifts = [get(args, 0), get(args, 1), get(args, 2)]; break;
+        case OP.OSH: shifts = [0,0,0]; shifts = [get(args, 0), get(args, 1), get(args, 2)]; break;
     }
     
-    if((code[pc][0] != OP.OSH)&(code[pc][0] != OP.LNP)) shifts = [0, 0, 0]
+    if((code[pc][0] != OP.OSH)&(code[pc][0] != OP.LNP)&(code[pc][0] != OP.PRINT)) shifts = [0, 0, 0]
     
     pc++
 
