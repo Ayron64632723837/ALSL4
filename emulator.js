@@ -331,26 +331,26 @@ function perform(){
 */
 
     switch(code[pc][0]){
-        case OP.ADD: set(args. 2, get(args, 0) + get(args, 1), true); break;
-        case OP.SUB: set(args. 2, get(args, 0) - get(args, 1), true); break;
-        case OP.MLL: set(args. 2, get(args, 0) * get(args, 1), true); break;
+        case OP.ADD: set(args, 2, get(args, 0) + get(args, 1), true); break;
+        case OP.SUB: set(args, 2, get(args, 0) - get(args, 1), true); break;
+        case OP.MLL: set(args, 2, get(args, 0) * get(args, 1), true); break;
         case OP.MUL:
-            set(args. 2, get(args, 0) * get(args, 1), true)
+            set(args, 2, get(args, 0) * get(args, 1), true)
             set(args[2][0], args[2][1] + 1, get(args, 0) * get(args, 1) >>> DS, false); break;
-        case OP.DVV: set(args. 2, Math.floor(get(args, 0) / get(args, 1)), true); break;
-        case OP.MOD: set(args. 2, get(args, 0) % get(args, 1), true); break;
+        case OP.DVV: set(args, 2, Math.floor(get(args, 0) / get(args, 1)), true); break;
+        case OP.MOD: set(args, 2, get(args, 0) % get(args, 1), true); break;
 
-        case OP.AND: set(args. 2, get(args, 0) & get(args, 1), true); break;
-        case OP.NND: set(args. 2, ~(get(args, 0) & get(args, 1)), true); break;
-        case OP.BOR: set(args. 2, get(args, 0) | get(args, 1), true); break;
-        case OP.NOR: set(args. 2, ~(get(args, 0) | get(args, 1)), true); break;
-        case OP.XOR: set(args. 2, get(args, 0) ^ get(args, 1), true); break;
-        case OP.NXR: set(args. 2, ~(get(args, 0) ^ get(args, 1)), true); break;
+        case OP.AND: set(args, 2, get(args, 0) & get(args, 1), true); break;
+        case OP.NND: set(args, 2, ~(get(args, 0) & get(args, 1)), true); break;
+        case OP.BOR: set(args, 2, get(args, 0) | get(args, 1), true); break;
+        case OP.NOR: set(args, 2, ~(get(args, 0) | get(args, 1)), true); break;
+        case OP.XOR: set(args, 2, get(args, 0) ^ get(args, 1), true); break;
+        case OP.NXR: set(args, 2, ~(get(args, 0) ^ get(args, 1)), true); break;
         case OP.INV: set(args[1][0], args[1][1], ~get(args, 0), true); break;
 
-        case OP.SET: set(args. 0, get(args, 1)); break;
-        case OP.MOV: set(args. 0, get(args, 1)); set(args[1][0], args[1][1], 0); break;
-        case OP.CPY: set(args. 0, get(args, 1)); break;
+        case OP.SET: set(args, 0, get(args, 1)); break;
+        case OP.MOV: set(args, 0, get(args, 1)); set(args[1][0], args[1][1], 0); break;
+        case OP.CPY: set(args, 0, get(args, 1)); break;
 
         case OP.JMP: pc = get(args, 0) - 1; break;
         case OP.JIE: if(get(args, 0) == get(args, 1)) pc = get(args, 2) - 1; break;
@@ -376,8 +376,8 @@ function perform(){
         case OP.PTL: monitor.plot(get(args, 0), get(args, 1), get(args, 2),
         getHexRGBA(pregs[PREGS.$FCOLOR], true), getHexRGBA(pregs[PREGS.$BGCOLOR], false)); break;
         
-        case OP.RSH: set(args. 2, get(args, 0) >> get(args, 1), true); break;
-        case OP.LSH: set(args. 2, get(args, 0) << get(args, 1), true); break;
+        case OP.RSH: set(args, 2, get(args, 0) >> get(args, 1), true); break;
+        case OP.LSH: set(args, 2, get(args, 0) << get(args, 1), true); break;
         
         case OP.LNP: break;
         case OP.MNP: update_flags(0); break;
