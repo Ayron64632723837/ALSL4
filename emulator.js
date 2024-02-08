@@ -261,8 +261,8 @@ function update_flags(value){
 
 function set(args, index, value, doUpdateFlags){
     arg = args[index]
-    type = args[0]
-    address = args[1] + shifts[index]
+    type = arg[0]
+    address = arg[1] + shifts[index]
     switch(type){
         case TYPE.CONST:
             ram[ram[address & AL]] = value & DL
@@ -336,7 +336,8 @@ function perform(){
         case OP.MLL: set(args, 2, get(args, 0) * get(args, 1), true); break;
         case OP.MUL:
             set(args, 2, get(args, 0) * get(args, 1), true)
-            set(args[2][0], args[2][1] + 1, get(args, 0) * get(args, 1) >>> DS, false); break;
+            shifts[2] = shifts[2] + 1
+            set(args, 2, get(args, 0) * get(args, 1) >>> DS, false); break;
         case OP.DVV: set(args, 2, Math.floor(get(args, 0) / get(args, 1)), true); break;
         case OP.MOD: set(args, 2, get(args, 0) % get(args, 1), true); break;
 
