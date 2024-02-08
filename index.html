@@ -70,6 +70,7 @@
         
         for (let i = 0; i < iterations; ++i) {
             perform();
+            pc++;
         }
     }, 1000/ips)">Start</button>
     <button class="button" onclick="if(isWorking && isRunning){clearInterval(interval); pc = NaN; isRunning = false}">Stop</button>
