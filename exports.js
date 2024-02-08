@@ -104,6 +104,8 @@ const OP = {
     JNS: 53,
     JGE: 53,
     JSE: 52,
+
+    OSH: 60,
 }
 
 const OUTPUTMAP = {
