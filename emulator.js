@@ -263,7 +263,6 @@ function set(args, index, value, doUpdateFlags){
     arg = args[index]
     type = arg[0]
     address = arg[1] + shifts[index]
-    console.warn(args, arg, type, address, shifts)
     switch(type){
         case TYPE.CONST:
             ram[ram[address & AL]] = value & DL
@@ -296,7 +295,6 @@ function get(args, index){
     arg = args[index]
     type = arg[0]
     address = arg[1] + shifts[index]
-    console.warn(args, arg, type, address, shifts)
     switch(type){
         case TYPE.REG: return ram[address & AL]
         case TYPE.CONST: return address
@@ -324,8 +322,6 @@ function perform(){
             [TYPE.CONST, 0]
         ]]
     }
-
-    prevPC = pc
 /*
     switch(code[pc][0]){
         case OP.ADD:
@@ -391,7 +387,9 @@ function perform(){
         case OP.OSH: shifts = [0,0,0]; shifts = [get(args, 0), get(args, 1), get(args, 2)]; break;
     }
     
-    if((code[prevPC][0] != OP.OSH)&(code[prevPC][0] != OP.LNP)&(code[prevPC][0] != OP.PRINT)) shifts = [0, 0, 0]
+    if((code[pc][0] != OP.OSH)&(code[pc][0] != OP.LNP)&(code[pc][0] != OP.PRINT)) shifts = [0, 0, 0]
+    
+    pc++
 
     return
 }
