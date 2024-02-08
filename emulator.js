@@ -322,6 +322,8 @@ function perform(){
             [TYPE.CONST, 0]
         ]]
     }
+    
+    prevPC = pc
 /*
     switch(code[pc][0]){
         case OP.ADD:
@@ -387,7 +389,7 @@ function perform(){
         case OP.OSH: shifts = [0,0,0]; shifts = [get(args, 0), get(args, 1), get(args, 2)]; break;
     }
     
-    if((code[pc][0] != OP.OSH)&(code[pc][0] != OP.LNP)&(code[pc][0] != OP.PRINT)) shifts = [0, 0, 0]
+    if((code[prevPC][0] != OP.OSH)&(code[prevPC][0] != OP.LNP)&(code[prevPC][0] != OP.PRINT)) shifts = [0, 0, 0]
     
     pc++
 
