@@ -93,11 +93,11 @@ var ALSLHighlightRules = function () {
                 caseInsensitive: true
             },{
                 token: 'token keyword logic',
-                regex: /\b(and|nnd|bor|nor|xor|nxr|inv|lnp)\b/,
+                regex: /\b(and|nnd|bor|nor|xor|nxr|inv|lnp|lsh|rsh)\b/,
                 caseInsensitive: true
             },{
                 token: 'token keyword general',
-                regex: /\b(set|mov|cpy|prg|ext|rtn)\b/,
+                regex: /\b(set|mov|cpy|prg|ext|rtn|osh)\b/,
                 caseInsensitive: true
             },{
                 token: 'token keyword jump',
