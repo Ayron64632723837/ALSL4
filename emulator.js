@@ -14,7 +14,7 @@ AL = 0xff
 
 DS = 8
 
-shifts = []
+shifts = [0, 0, 0]
 
 isRunning = false
 interval = null
@@ -384,7 +384,9 @@ function perform(){
 
         case OP.OSH: shifts = [get(args, 0), get(args, 1), get(args, 2)]; break;
     }
-
+    
+    shifts = [0, 0, 0]
+    
     pc++
 
     return
