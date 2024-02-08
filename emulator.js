@@ -263,6 +263,7 @@ function set(args, index, value, doUpdateFlags){
     arg = args[index]
     type = arg[0]
     address = arg[1] + shifts[index]
+    console.warn(args, arg, type, address, shifts)
     switch(type){
         case TYPE.CONST:
             ram[ram[address & AL]] = value & DL
@@ -295,13 +296,16 @@ function get(args, index){
     arg = args[index]
     type = arg[0]
     address = arg[1] + shifts[index]
+    console.warn(args, arg, type, address, shifts)
     switch(type){
         case TYPE.REG: return ram[address & AL]
         case TYPE.CONST: return address
         case TYPE.PLINK: return ram[pregs[address] & AL]
         case TYPE.LINK: return ram[ram[address & AL]]
         case TYPE.FLAG: return flags[address]
-        case TYPE.PREG: return pregs[address]
+        case TYPE.PREG:
+            if(address == PREGS.$RANDOM) return Math.floor(Math.random() * DL)
+            return pregs[address]
     }
 }
 
@@ -309,8 +313,7 @@ function perform(){
     if(code.lenght < 1) return -1
     //if(pc < 0) return -1
     if(pc >= code.length) return -1
-
-    pregs[PREGS.$RANDOM] = Math.floor(Math.random() * DL)
+    if(pc < 0) return -1
 
     if(pc < code.length){
         args = code[pc][1]
