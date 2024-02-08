@@ -18,13 +18,13 @@
             e.preventDefault();
             let key = event.keyCode & 0b01111111
             //console.log(key, "down", e)
-            set(TYPE.PREG, PREGS.$KB, key)
+            set([TYPE.PREG, PREGS.$KB], 0, key, false)
         })
         document.getElementById("screen").addEventListener("keyup", function(e) {
             e.preventDefault();
             let key = event.keyCode | 0b10000000
             //console.log(key, "up", e)
-            set(TYPE.PREG, PREGS.$KB, key)
+            set([TYPE.PREG, PREGS.$KB], 0, key, false)
         })
     </script>
     
