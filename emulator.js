@@ -262,16 +262,17 @@ function update_flags(value){
 function set(args, index, value, doUpdateFlags){
     arg = args[index]
     type = arg[0]
-    address = arg[1] + shifts[index]
+    address = arg[1]
+    shift = shifts[index]
     switch(type){
         case TYPE.CONST:
-            ram[ram[address & AL]] = value & DL
+            ram[(ram[address & AL] + shift) & AL] = value & DL
             break;
         case TYPE.REG:
-            ram[address & AL] = value & DL
+            ram[(address + shift) & AL] = value & DL
             break;
         case TYPE.LINK:
-            ram[ram[address & AL]] = value & DL
+            ram[(ram[address & AL] + shift) & AL] = value & DL
             break;
         case TYPE.PREG:
             //if(address == PREGS.$KB) console.log(value)
@@ -282,7 +283,7 @@ function set(args, index, value, doUpdateFlags){
             flags[address & 31] = value
             break;
         case TYPE.PLINK:
-            ram[pregs[address]] = value & DL
+            ram[(pregs[address] + shift) & AL] = value & DL
             break;
     }
 
@@ -294,16 +295,17 @@ function set(args, index, value, doUpdateFlags){
 function get(args, index){
     arg = args[index]
     type = arg[0]
-    address = arg[1] + shifts[index]
+    address = arg[1]
+    shift = shifts[index]
     switch(type){
         case TYPE.REG: return ram[address & AL]
-        case TYPE.CONST: return address
-        case TYPE.PLINK: return ram[pregs[address] & AL]
-        case TYPE.LINK: return ram[ram[address & AL]]
+        case TYPE.CONST: return (address + shift) & DL
+        case TYPE.PLINK: return (ram[pregs[address] & AL] + shift) & DL
+        case TYPE.LINK: return (ram[ram[address & AL]] + shift) & DL
         case TYPE.FLAG: return flags[address]
         case TYPE.PREG:
-            if(address == PREGS.$RANDOM) return Math.floor(Math.random() * DL)
-            return pregs[address]
+            if(address == PREGS.$RANDOM) return (Math.floor(Math.random() * DL) + shift) & DL
+            return (pregs[address] + shift) & DL
     }
 }
 
