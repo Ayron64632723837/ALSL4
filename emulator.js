@@ -392,8 +392,6 @@ function perform(){
     }
     
     if((code[prevPC][0] != OP.OSH)&(code[prevPC][0] != OP.LNP)&(code[prevPC][0] != OP.PRINT)) shifts = [0, 0, 0]
-    
-    pc++
 
     return
 }
