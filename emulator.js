@@ -14,7 +14,7 @@ AL = 0xff
 
 DS = 8
 
-shifts = [0, 0, 0]
+shifts = [[0, 0, 0], [0, 0, 0]]
 
 isRunning = false
 interval = null
@@ -263,7 +263,7 @@ function set(args, index, value, doUpdateFlags){
     arg = args[index]
     type = arg[0]
     address = arg[1]
-    shift = shifts[index]
+    shift = shifts[0][index]
     switch(type){
         case TYPE.CONST:
             ram[(ram[address & AL] + shift) & AL] = value & DL
@@ -296,12 +296,13 @@ function get(args, index){
     arg = args[index]
     type = arg[0]
     address = arg[1]
-    shift = shifts[index]
+    shift = shifts[0][index]
+    ashift = shifts[1][index]
     switch(type){
         case TYPE.REG: return ram[address & AL]
         case TYPE.CONST: return (address + shift) & DL
-        case TYPE.PLINK: return (ram[pregs[address] & AL] + shift) & DL
-        case TYPE.LINK: return (ram[ram[address & AL]] + shift) & DL
+        case TYPE.PLINK: return (ram[(pregs[address] + ashift) & AL] + shift) & DL
+        case TYPE.LINK: return (ram[(ram[address & AL] + ashift) & AL] + shift) & DL
         case TYPE.FLAG: return flags[address]
         case TYPE.PREG:
             if(address == PREGS.$RANDOM) return (Math.floor(Math.random() * DL) + shift) & DL
@@ -341,7 +342,7 @@ function perform(){
         case OP.MLL: set(args, 2, get(args, 0) * get(args, 1), true); break;
         case OP.MUL:
             set(args, 2, get(args, 0) * get(args, 1), true)
-            shifts[2] = shifts[2] + 1
+            shifts[0][2] = shifts[0][2] + 1
             set(args, 2, get(args, 0) * get(args, 1) >>> DS, false); break;
         case OP.DVV: set(args, 2, Math.floor(get(args, 0) / get(args, 1)), true); break;
         case OP.MOD: set(args, 2, get(args, 0) % get(args, 1), true); break;
@@ -388,10 +389,12 @@ function perform(){
         case OP.LNP: break;
         case OP.MNP: update_flags(0); break;
 
-        case OP.OSH: shifts = [0,0,0]; shifts = [get(args, 0), get(args, 1), get(args, 2)]; break;
+        case OP.OSH: shifts[0] = [0,0,0]; shifts[0] = [get(args, 0), get(args, 1), get(args, 2)]; break;
+        case OP.ASH: shifts[1] = [0,0,0]; shifts[1] = [get(args, 0), get(args, 1), get(args, 2)]; break;
     }
     
-    if((code[prevPC][0] != OP.OSH)&(code[prevPC][0] != OP.LNP)&(code[prevPC][0] != OP.PRINT)) shifts = [0, 0, 0]
+    if((code[prevPC][0] != OP.OSH)&(code[prevPC][0] != OP.LNP)&(code[prevPC][0] != OP.PRINT)) shifts[0] = [0, 0, 0]
+    if((code[prevPC][0] != OP.ASH)&(code[prevPC][0] != OP.LNP)&(code[prevPC][0] != OP.PRINT)) shifts[1] = [0, 0, 0]
 
     return
 }
