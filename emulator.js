@@ -184,7 +184,7 @@ class Screen{
         this.canvas.fillRect(x, y, charwidth, charheight)
         if(color == 0xffffffff | color == "#ffffffff"){
             this.canvas.fillStyle=color
-            this.canvas.drawImage(this.img, imgX, imgY, this.img.width / 16, this.img.height / 16, x*charwidth, y*charheight, charwidth, charheight)
+            this.canvas.drawImage(this.img, imgX, imgY, this.img.width / 16, this.img.height / 16, x, y, charwidth, charheight)
         }else{
             let rawdata = new Array()
             let c = 4*(imgX + imgY*this.img.width)
