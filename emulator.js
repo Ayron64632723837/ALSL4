@@ -292,12 +292,12 @@ function set(args, index, value, doUpdateFlags){
     return true;
 }
 
-function get(args, index){
+function get(args, index, shifted = true){
     arg = args[index]
     type = arg[0]
     address = arg[1]
-    shift = shifts[0][index]
-    ashift = shifts[1][index]
+    shift = shifts[0][index] * shifted
+    ashift = shifts[1][index] * shifted
     switch(type){
         case TYPE.REG: return ram[address & AL]
         case TYPE.CONST: return (address + shift) & DL
@@ -389,12 +389,12 @@ function perform(){
         case OP.LNP: break;
         case OP.MNP: update_flags(0); break;
 
-        case OP.OSH: shifts[0] = [0,0,0]; shifts[0] = [get(args, 0), get(args, 1), get(args, 2)]; break;
-        case OP.ASH: shifts[1] = [0,0,0]; shifts[1] = [get(args, 0), get(args, 1), get(args, 2)]; break;
+        case OP.OSH: shifts[0] = [0,0,0]; shifts[0] = [get(args, 0, false), get(args, 1, false), get(args, 2, false)]; break;
+        case OP.ASH: shifts[1] = [0,0,0]; shifts[1] = [get(args, 0, false), get(args, 1, false), get(args, 2, false)]; break;
     }
     
-    if((code[prevPC][0] != OP.OSH)&(code[prevPC][0] != OP.LNP)&(code[prevPC][0] != OP.PRINT)) shifts[0] = [0, 0, 0]
-    if((code[prevPC][0] != OP.ASH)&(code[prevPC][0] != OP.LNP)&(code[prevPC][0] != OP.PRINT)) shifts[1] = [0, 0, 0]
+    if((code[prevPC][0] != OP.OSH)&(code[prevPC][0] != OP.ASH)&(code[prevPC][0] != OP.LNP)&(code[prevPC][0] != OP.PRINT)) shifts[0] = [0, 0, 0]
+    if((code[prevPC][0] != OP.OSH)&(code[prevPC][0] != OP.ASH)&(code[prevPC][0] != OP.LNP)&(code[prevPC][0] != OP.PRINT)) shifts[1] = [0, 0, 0]
 
     return
 }
