@@ -13,9 +13,13 @@
 <body>
     <script>
         
+        sw = Number(document.getElementById('swpx').value)
+        sh = Number(document.getElementById('shpx').value)
+        swc = Number(document.getElementById('sws').value)
+        shc = Number(document.getElementById('shs').value)
 
-monitor = new Screen(screenwidth, screenheight,
-    screenwidthchars, screenheightchars, "screen")
+monitor = new Screen(sw, sw,
+    swc, shc, "screen")
 monitor.load_image()
 
     </script>
