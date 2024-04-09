@@ -229,9 +229,19 @@ function create(databus, addressbus, code, screenwidth, screenheight, screenwidt
     pregs[PREGS.$FCOLOR] = getRGBAHex(255, 255, 255, 255)
     pregs[PREGS.$BGCOLOR] = getRGBAHex(0, 0, 0, 255)
 
-    monitor = new Screen(screenwidth, screenheight,
-        screenwidthchars, screenheightchars, "screen")
-    monitor.load_image()
+    monitor
+        .width = width
+        .height = height
+        .wchars = wchars
+        .hchars = hchars
+        .canvas.imageSmoothingEnabled = false
+        
+    let nodeid = document.getElementById(node)
+    nodeid.width = width
+    nodeid.height = height
+    nodeid.imageSmoothingEnabled = false
+    monitor.canvas = nodeid.getContext('2d')
+
 
     DL = 2**databus - 1
     AL = 2**addressbus - 1
