@@ -235,7 +235,7 @@ function create(databus, addressbus, code, screenwidth, screenheight, screenwidt
         .wchars = screenwidthchars
         .hchars = screenheightchars
         
-    let nodeid = document.getElementById(node)
+    let nodeid = document.getElementById("screen")
     nodeid.width = screenwidth
     nodeid.height = screenheight
     nodeid.imageSmoothingEnabled = false
