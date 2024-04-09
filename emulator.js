@@ -228,12 +228,11 @@ function create(databus, addressbus, code, screenwidth, screenheight, screenwidt
 
     pregs[PREGS.$FCOLOR] = getRGBAHex(255, 255, 255, 255)
     pregs[PREGS.$BGCOLOR] = getRGBAHex(0, 0, 0, 255)
-
-    monitor
-        .width = screenwidth
-        .height = screenheight
-        .wchars = screenwidthchars
-        .hchars = screenheightchars
+    
+    monitor.width = screenwidth
+    monitor.height = screenheight
+    monitor.wchars = screenwidthchars
+    monitor.hchars = screenheightchars
         
     let nodeid = document.getElementById("screen")
     nodeid.width = screenwidth
