@@ -234,13 +234,13 @@ function create(databus, addressbus, code, screenwidth, screenheight, screenwidt
         .height = screenheight
         .wchars = screenwidthchars
         .hchars = screenheightchars
-        .canvas.imageSmoothingEnabled = false
         
     let nodeid = document.getElementById(node)
-    nodeid.width = width
-    nodeid.height = height
+    nodeid.width = screenwidth
+    nodeid.height = screenheight
     nodeid.imageSmoothingEnabled = false
     monitor.canvas = nodeid.getContext('2d')
+    monitor.canvas.imageSmoothingEnabled = false
 
 
     DL = 2**databus - 1
