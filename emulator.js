@@ -230,10 +230,10 @@ function create(databus, addressbus, code, screenwidth, screenheight, screenwidt
     pregs[PREGS.$BGCOLOR] = getRGBAHex(0, 0, 0, 255)
 
     monitor
-        .width = width
-        .height = height
-        .wchars = wchars
-        .hchars = hchars
+        .width = screenwidth
+        .height = screenheight
+        .wchars = screenwidthchars
+        .hchars = screenheightchars
         .canvas.imageSmoothingEnabled = false
         
     let nodeid = document.getElementById(node)
