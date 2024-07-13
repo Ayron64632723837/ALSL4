@@ -17,7 +17,7 @@ DS = 8
 shifts = [[0, 0, 0], [0, 0, 0]]
 
 isRunning = false
-interval = null
+intervals = []
 
 color = {
     r: {
@@ -381,7 +381,7 @@ function perform(){
         case OP.JNG: if(get(args, 0) <= get(args, 1)) pc = get(args, 2) - 1; break;
         case OP.JNS: if(get(args, 0) >= get(args, 1)) pc = get(args, 2) - 1; break;
         
-        case OP.EXT: clearInterval(interval); pc = 0; isRunning = false; break;
+        case OP.EXT: clearInterval(intervals); pc = 0; isRunning = false; break;
         case OP.PRINT: console.log(">>>", get(args, 0), get(args, 1), get(args, 2)); break;
         
         case OP.PNT:
