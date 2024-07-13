@@ -60,7 +60,7 @@
 
     let last_interval = performance.now();
 
-    clearInterval(intervals)
+    clearIntervals(intervals)
     intervals.push(setInterval(f => {
         const now = performance.now();
         const dt = now - last_interval;
@@ -73,8 +73,8 @@
             pc++;
         }
     }), 1000/ips)">Start</button>
-    <button class="button" onclick="if(isWorking && isRunning){clearInterval(intervals); pc = NaN; isRunning = false}">Stop</button>
-    <button class="button" onclick="if(isWorking){clearInterval(intervals); isWorking = false;}">Pause</button>
+    <button class="button" onclick="if(isWorking && isRunning){clearIntervals(intervals); pc = NaN; isRunning = false}">Stop</button>
+    <button class="button" onclick="if(isWorking){clearIntervals(intervals); isWorking = false;}">Pause</button>
     
     <buttom class="button" onclick="
     var input = document.createElement('input')
