@@ -60,7 +60,7 @@
 
     let last_interval = performance.now();
 
-    clearIntervals(intervals)
+    clearIntervals(intervals) 
     intervals.push(setInterval(f => {
         const now = performance.now();
         const dt = now - last_interval;
