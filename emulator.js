@@ -7,6 +7,7 @@ function clearIntervals(intervals){
 ram = []
 pregs = Array(32).fill(0)
 stack = []
+stackpointer = 0
 flags = Array(32).fill(0)
 funcstack = []
 sp = -1
@@ -291,7 +292,8 @@ function set(args, index, value, doUpdateFlags){
         case TYPE.PREG:
             //if(address == PREGS.$KB) console.log(value)
             if(address == PREGS.$STACK){
-                stack.push(value & DL)
+                stackpointer = (stackpointer + 1) & AL
+                stack[stackpointer] = value & DL
                 return
             }
             pregs[address] = value & DL
@@ -325,8 +327,9 @@ function get(args, index, shifted = true){
         case TYPE.PREG:
             if(address == PREGS.$RANDOM) return (Math.floor(Math.random() * DL) + shift) & DL
             if(address == PREGS.$STACK){
-                if(stack.length > 0) return stack.pop()
-                else return 0
+                let result = (stack[stackpointer] + shift) & DL
+                stackpointer = (stackpointer - 1) & AL
+                return result
             }
             return (pregs[address] + shift) & DL
     }
