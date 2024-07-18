@@ -290,6 +290,10 @@ function set(args, index, value, doUpdateFlags){
             break;
         case TYPE.PREG:
             //if(address == PREGS.$KB) console.log(value)
+            if(address == PREGS.$STACK){
+                stack.push(value & DL)
+                return
+            }
             pregs[address] = value & DL
             
             break;
@@ -320,6 +324,10 @@ function get(args, index, shifted = true){
         case TYPE.FLAG: return flags[address]
         case TYPE.PREG:
             if(address == PREGS.$RANDOM) return (Math.floor(Math.random() * DL) + shift) & DL
+            if(address == PREGS.$STACK){
+                if(stack.length > 0) return stack.pop()
+                else return 0
+            }
             return (pregs[address] + shift) & DL
     }
 }
