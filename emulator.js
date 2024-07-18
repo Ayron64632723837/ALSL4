@@ -7,7 +7,7 @@ function clearIntervals(intervals){
 ram = []
 pregs = Array(32).fill(0)
 stack = []
-stackpointer = 0
+stackpointer = -1
 flags = Array(32).fill(0)
 funcstack = []
 sp = -1
