@@ -100,7 +100,7 @@ class Screen{
     make_buffer(){
         // Create a canvas element
         var buffer = document.createElement('canvas');
-        buffer.width = this,width;
+        buffer.width = this.width;
         buffer.height = this.height;
         
         // Get the drawing context
