@@ -50,10 +50,12 @@
         sh = Number(document.getElementById('shpx').value)
         swc = Number(document.getElementById('sws').value)
         shc = Number(document.getElementById('shs').value)
+        
+        swap = document.getElementById('swapmode').checked
 
         pc = 0
 
-        create(dbl, abl, null, sw=sw, sh=sh, swc=swc, shc=shc, data[1])
+        create(dbl, abl, null, sw=sw, sh=sh, swc=swc, shc=shc, swap, data[1])
     }
     
     ips = Number(document.getElementById('speed').value)
