@@ -104,7 +104,7 @@ class Screen{
         buffer.height = this.height;
         
         // Get the drawing context
-        var bufferctx = canvas.getContext('2d');
+        var bufferctx = buffer.getContext('2d');
         bufferctx.imageSmoothingEnabled = false
 
         this.buffercanvas = buffer
