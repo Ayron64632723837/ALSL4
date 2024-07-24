@@ -95,6 +95,7 @@ class Screen{
     }
 
     set_swapmode(mode){
+        this.swapmode = mode
         this.canvas = mode ? this.buffer : this.screen
     }
     
