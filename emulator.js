@@ -435,6 +435,7 @@ function perform(){
             monitor.dot(get(args, 0), get(args, 1), getHexRGBA(get(args, 2))); break;
         case OP.PTL: monitor.plot(get(args, 0), get(args, 1), get(args, 2),
         getHexRGBA(pregs[PREGS.$FCOLOR], true), getHexRGBA(pregs[PREGS.$BGCOLOR], false)); break;
+        case OP.SWP: monitor.swap(); break;
         
         case OP.RSH: set(args, 2, get(args, 0) >> get(args, 1), true); break;
         case OP.LSH: set(args, 2, get(args, 0) << get(args, 1), true); break;
