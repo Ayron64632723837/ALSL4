@@ -89,6 +89,7 @@ class Screen{
     }
 
     swap(){
+        if(!this.swapmode) return
         this.screen.clearRect(0, 0, this.width, this.height)
         this.screen.drawImage(this.buffercanvas, 0, 0);
     }
