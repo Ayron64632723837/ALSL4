@@ -273,6 +273,7 @@ function create(databus, addressbus, code, screenwidth, screenheight, screenwidt
     monitor.canvas = nodeid.getContext('2d')
     monitor.canvas.imageSmoothingEnabled = false
 
+    monitor.make_buffer()
 
     DL = 2**databus - 1
     AL = 2**addressbus - 1
