@@ -92,6 +92,10 @@ class Screen{
         this.screen.clearRect(0, 0, this.width, this.height)
         this.screen.drawImage(this.buffer, 0, 0);
     }
+
+    set_swapmode(mode){
+        this.canvas = mode ? this.buffer : this.screen
+    }
     
     make_buffer(){
         // Create a canvas element
