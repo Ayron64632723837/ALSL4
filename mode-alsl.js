@@ -224,7 +224,7 @@ var Mode = function () {
 };
 oop.inherits(Mode, TextMode);
 (function () {
-    this.lineCommentStart = [";"];
+    this.lineCommentStart = ["//"];
     this.$id = "ace/mode/alsl";
 }).call(Mode.prototype);
 exports.Mode = Mode;
