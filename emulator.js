@@ -90,7 +90,7 @@ class Screen{
 
     swap(){
         this.screen.clearRect(0, 0, this.width, this.height)
-        this.screen.drawImage(this.buffer, 0, 0);
+        this.screen.drawImage(this.buffercanvas, 0, 0);
     }
 
     set_swapmode(mode){
@@ -107,6 +107,7 @@ class Screen{
         var bufferctx = canvas.getContext('2d');
         bufferctx.imageSmoothingEnabled = false
 
+        this.buffercanvas = buffer
         this.buffer = bufferctx
     }
     
