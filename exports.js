@@ -97,6 +97,7 @@ const OP = {
     CLS: 48,
     PLT: 49,
     PTL: 410,
+    SWP: 411,
     
     JIG: 50,
     JIS: 51,
@@ -148,6 +149,7 @@ const OUTPUTMAP = {
     48: -1,
     49: -1,
     410: -1,
+    411: -1,
 }
 
 const ARGUMENTCOUNT = {
@@ -189,6 +191,7 @@ const ARGUMENTCOUNT = {
     48: 0,
     49: 3,
     410: 3,
+    411: 0,
 
     50: 3,
     51: 3,
