@@ -70,19 +70,40 @@ function getRGBAHex(r, g, b, a){
 
 class Screen{
     constructor(width, height, wchars, hchars, node){
-
+        this.swapmode = false
+        
         this.width = width
         this.height = height
         this.wchars = wchars
         this.hchars = hchars
         let nodeid = document.getElementById(node)
-        this.canvas = nodeid.getContext('2d')
+        this.screen = nodeid.getContext('2d')
 
         nodeid.width = width
         nodeid.height = height
         nodeid.imageSmoothingEnabled = false
 
-        this.canvas.imageSmoothingEnabled = false
+        this.screen.imageSmoothingEnabled = false
+
+        this.canvas = this.screen
+    }
+
+    swap(){
+        this.screen.clearRect(0, 0, this.width, this.height)
+        this.screen.drawImage(this.buffer, 0, 0);
+    }
+    
+    make_buffer(){
+        // Create a canvas element
+        var buffer = document.createElement('canvas');
+        buffer.width = this,width;
+        buffer.height = this.height;
+        
+        // Get the drawing context
+        var bufferctx = canvas.getContext('2d');
+        bufferctx.imageSmoothingEnabled = false
+
+        this.buffer = bufferctx
     }
     
     load_image(path = "./assets/default_font.png"){
