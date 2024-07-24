@@ -247,7 +247,7 @@ class Screen{
 }
 
 
-function create(databus, addressbus, code, screenwidth, screenheight, screenwidthchars, screenheightchars, conmem){
+function create(databus, addressbus, code, screenwidth, screenheight, screenwidthchars, screenheightchars, swapmode, conmem){
     ram = Array(2**addressbus).fill(0)
     let l = Math.min(2**addressbus, conmem.length)
     for(let i = 0; i < l; i++){
@@ -274,6 +274,7 @@ function create(databus, addressbus, code, screenwidth, screenheight, screenwidt
     monitor.canvas.imageSmoothingEnabled = false
 
     monitor.make_buffer()
+    monitor.set_swapmode(swapmode)
 
     DL = 2**databus - 1
     AL = 2**addressbus - 1
