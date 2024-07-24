@@ -110,6 +110,10 @@
             document.getElementById('shpx').value = loaddata.screen.height
             document.getElementById('sws').value = loaddata.screen.widthChars
             document.getElementById('shs').value = loaddata.screen.heightChars
+
+            if(loaddata.screen.swapmode !== undefined){
+                document.getElementById('swapmode').checked = loaddata.screen.swapmode
+            }
         }
     }
     
@@ -157,7 +161,8 @@
             width: Number(document.getElementById('swpx').value),
             height: Number(document.getElementById('shpx').value),
             widthChars: Number(document.getElementById('sws').value),
-            heightChars: Number(document.getElementById('shs').value)
+            heightChars: Number(document.getElementById('shs').value),
+            swapmode: document.getElementById('swapmode').checked,
         },
         machine: {
             speed: Number(document.getElementById('speed').value),
