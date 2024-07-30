@@ -54,6 +54,12 @@ function getHexRGBA(c, raw=false){
     let b = color.b.shift < 0 ? 255 : ((c >> color.b.shift) & color.b.limit) * Math.round(255 / color.b.limit)
     let a = color.a.shift < 0 ? 255 : ((c >> color.a.shift) & color.a.limit) * Math.round(255 / color.a.limit)
 
+    let y = color.y.shift < 0 ? 255 : ((c >> color.y.shift) & color.y.limit) * Math.round(255 / color.y.limit)
+    
+    r &= y
+    g &= y
+    b &= y
+    
     if(raw){
         return ((r << 24) + (g << 16) + (b << 8) + a ) >>> 0
     }
