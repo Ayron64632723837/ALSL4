@@ -281,12 +281,18 @@
                                     shift: s.length - s.lastIndexOf('a') - 1,
                                     bits: s.lastIndexOf('a') - s.indexOf('a') + 1,
                                     limit: 2**(s.lastIndexOf('a') - s.indexOf('a') + 1) - 1
+                                },
+                                y: {
+                                    shift: s.length - s.lastIndexOf('y') - 1,
+                                    bits: s.lastIndexOf('y') - s.indexOf('y') + 1,
+                                    limit: 2**(s.lastIndexOf('y') - s.indexOf('y') + 1) - 1
                                 }
                             }
                             if(s.indexOf('r') == -1) color.r.shift = -1
                             if(s.indexOf('g') == -1) color.g.shift = -1
                             if(s.indexOf('b') == -1) color.b.shift = -1
                             if(s.indexOf('a') == -1) color.a.shift = -1
+                            if(s.indexOf('y') == -1) color.y.shift = -1
                             
                             ">Apply</button>
                         </th>
