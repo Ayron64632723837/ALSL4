@@ -49,12 +49,12 @@ color = {
 }
 
 function getHexRGBA(c, raw=false){
-    let r = color.r.shift < 0 ? 255 : ((c >> color.r.shift) & color.r.limit) * Math.ceil(255 / color.r.limit)
-    let g = color.g.shift < 0 ? 255 : ((c >> color.g.shift) & color.g.limit) * Math.ceil(255 / color.g.limit)
-    let b = color.b.shift < 0 ? 255 : ((c >> color.b.shift) & color.b.limit) * Math.ceil(255 / color.b.limit)
-    let a = color.a.shift < 0 ? 255 : ((c >> color.a.shift) & color.a.limit) * Math.ceil(255 / color.a.limit)
+    let r = (color.r.shift < 0 ? 255 : ((c >> color.r.shift) & color.r.limit) << 8) >> color.r.bits
+    let g = (color.g.shift < 0 ? 255 : ((c >> color.g.shift) & color.g.limit) << 8) >> color.g.bits
+    let b = (color.b.shift < 0 ? 255 : ((c >> color.b.shift) & color.b.limit) << 8) >> color.b.bits
+    let a = (color.a.shift < 0 ? 255 : ((c >> color.a.shift) & color.a.limit) << 8) >> color.a.bits
 
-    let y = color.y.shift < 0 ? 255 : ((c >> color.y.shift) & color.y.limit) * Math.ceil(255 / color.y.limit)
+    let y = (color.y.shift < 0 ? 255 : ((c >> color.y.shift) & color.y.limit) << 8) >> color.y.bits
     
     r &= y
     g &= y
