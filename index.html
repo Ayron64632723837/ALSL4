@@ -282,10 +282,15 @@
                                     bits: s.lastIndexOf('a') - s.indexOf('a') + 1,
                                     limit: 2**(s.lastIndexOf('a') - s.indexOf('a') + 1) - 1
                                 },
-                                y: {
-                                    shift: s.length - s.lastIndexOf('y') - 1,
-                                    bits: s.lastIndexOf('y') - s.indexOf('y') + 1,
-                                    limit: 2**(s.lastIndexOf('y') - s.indexOf('y') + 1) - 1
+                                k: {
+                                    shift: s.length - s.lastIndexOf('k') - 1,
+                                    bits: s.lastIndexOf('k') - s.indexOf('k') + 1,
+                                    limit: 2**(s.lastIndexOf('k') - s.indexOf('k') + 1) - 1
+                                },
+                                l: {
+                                    shift: s.length - s.lastIndexOf('l') - 1,
+                                    bits: s.lastIndexOf('l') - s.indexOf('l') + 1,
+                                    limit: 2**(s.lastIndexOf('l') - s.indexOf('l') + 1) - 1
                                 }
                             }
                             if(s.indexOf('r') == -1) color.r.shift = -1
