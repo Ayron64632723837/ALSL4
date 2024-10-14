@@ -109,7 +109,7 @@ var ALSLHighlightRules = function () {
                 caseInsensitive: true
             },{
                 token: 'token keyword screen',
-                regex: /\b(pnt|cls|plt|ptl)\b/,
+                regex: /\b(pnt|cls|plt|ptl|swp)\b/,
                 caseInsensitive: true
             },
             
