@@ -4,6 +4,46 @@ function clearIntervals(intervals){
     }
 }
 
+let s = document.getElementById('colormodel').value.toLowerCase()
+                            color = {
+                                r: {
+                                    shift: s.length - s.lastIndexOf('r') - 1,
+                                    bits: s.lastIndexOf('r') - s.indexOf('r') + 1,
+                                    limit: 2**(s.lastIndexOf('r') - s.indexOf('r') + 1) - 1
+                                },
+                                g: {
+                                    shift: s.length - s.lastIndexOf('g') - 1,
+                                    bits: s.lastIndexOf('g') - s.indexOf('g') + 1,
+                                    limit: 2**(s.lastIndexOf('g') - s.indexOf('g') + 1) - 1
+                                },
+                                b: {
+                                    shift: s.length - s.lastIndexOf('b') - 1,
+                                    bits: s.lastIndexOf('b') - s.indexOf('b') + 1,
+                                    limit: 2**(s.lastIndexOf('b') - s.indexOf('b') + 1) - 1
+                                },
+                                a: {
+                                    shift: s.length - s.lastIndexOf('a') - 1,
+                                    bits: s.lastIndexOf('a') - s.indexOf('a') + 1,
+                                    limit: 2**(s.lastIndexOf('a') - s.indexOf('a') + 1) - 1
+                                },
+                                k: {
+                                    shift: s.length - s.lastIndexOf('k') - 1,
+                                    bits: s.lastIndexOf('k') - s.indexOf('k') + 1,
+                                    limit: 2**(s.lastIndexOf('k') - s.indexOf('k') + 1) - 1
+                                },
+                                l: {
+                                    shift: s.length - s.lastIndexOf('l') - 1,
+                                    bits: s.lastIndexOf('l') - s.indexOf('l') + 1,
+                                    limit: 2**(s.lastIndexOf('l') - s.indexOf('l') + 1) - 1
+                                }
+                            }
+                            if(s.indexOf('r') == -1) color.r.shift = -1
+                            if(s.indexOf('g') == -1) color.g.shift = -1
+                            if(s.indexOf('b') == -1) color.b.shift = -1
+                            if(s.indexOf('a') == -1) color.a.shift = -1
+                            if(s.indexOf('k') == -1) color.k.shift = -1
+                            if(s.indexOf('l') == -1) color.l.shift = -1
+
 ram = []
 pregs = Array(32).fill(0)
 stack = []
