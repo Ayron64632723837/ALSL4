@@ -1,6 +1,6 @@
 const convertCode = {
     toPureALSL4(raw){
-        let c = lex(raw)
+        let c = lex(raw)[0]
         let result = ""
 
         for(let i of c){
