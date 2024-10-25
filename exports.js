@@ -60,6 +60,129 @@ const FLAG = {
 
 const OP = {
     NULL: 0,
+    ADD: 1,
+    SUB: 2,
+    MUL: 3,
+    MLL: 4,
+    DVV: 5,
+    MOD: 6,
+    MNP: 7,
+    DIV: 8,
+    LSH: 9,
+    LNP: 10,
+    PRG: 11,
+    EXT: 12,
+    SET: 13,
+    MOV: 14,
+    CPY: 15,
+    VAR: 16,
+    CONST: 17,
+    RTN: 18,
+    PRINT: 19,
+    AND: 20,
+    NND: 21,
+    BOR: 22,
+    NOR: 23,
+    XOR: 24,
+    NXR: 25,
+    INV: 26,
+    RSH: 27,
+    JMP: 28,
+    JIE: 29,
+    JNE: 30,
+    JEZ: 31,
+    JNZ: 32,
+    JWR: 33,
+    PNT: 34,
+    CLS: 35,
+    PLT: 36,
+    PTL: 37,
+    SWP: 38,
+    JIG: 39,
+    JIS: 40,
+    JNG: 41,
+    JNS: 42,
+    JGE: 43,
+    JSE: 44,
+    OSH: 45,
+    ASH: 46,
+}
+const OPFUNCS = [
+    (args) => {},
+    (args) => {set(args, 2, get(args, 0) + get(args, 1), true);},
+    (args) => {set(args, 2, get(args, 0) - get(args, 1), true);},
+    (args) => {set(args, 2, get(args, 0) * get(args, 1), true);},
+    (args) => {
+        set(args, 2, get(args, 0) * get(args, 1), true)
+        shifts[0][2] = shifts[0][2] + 1
+        set(args, 2, get(args, 0) * get(args, 1) >>> DS, false);
+    },
+    (args) => {set(args, 2, Math.floor(get(args, 0) / get(args, 1)), true);},
+    (args) => {set(args, 2, get(args, 0) % get(args, 1), true);},
+    (args) => {update_flags(0);},
+    (args) => {set(args, 2, Math.floor(get(args, 0) / get(args, 1)), true);},
+    (args) => {set(args, 2, get(args, 0) << get(args, 1), true);},
+    (args) => {},
+    (args) => {},
+    (args) => {pc = 0; isRunning = false;},
+    (args) => {set(args, 0, get(args, 1));},
+    (args) => {set(args, 0, get(args, 1)); set(args[1][0], args[1][1], 0);},
+    (args) => {set(args, 0, get(args, 1));},
+    (args) => {},
+    (args) => {},
+    (args) => {pc = (funcstack[fsp & AL] - 1) & DL; fsp --;},
+    (args) => {console.log(">>>", get(args, 0), get(args, 1), get(args, 2));},
+    (args) => {set(args, 2, get(args, 0) & get(args, 1), true);},
+    (args) => {set(args, 2, ~(get(args, 0) & get(args, 1)), true);},
+    (args) => {set(args, 2, get(args, 0) | get(args, 1), true);},
+    (args) => {set(args, 2, ~(get(args, 0) | get(args, 1)), true);},
+    (args) => {set(args, 2, get(args, 0) ^ get(args, 1), true);},
+    (args) => {set(args, 2, ~(get(args, 0) ^ get(args, 1)), true);},
+    (args) => {set(args, 1, ~get(args, 0), true);},
+    (args) => {set(args, 2, get(args, 0) >> get(args, 1), true);},
+    (args) => {pc = get(args, 0) - 1;},
+    (args) => {if(get(args, 0) == get(args, 1)) pc = get(args, 2) - 1;},
+    (args) => {if(get(args, 0) != get(args, 1)) pc = get(args, 2) - 1;},
+    (args) => {if(get(args, 0) == 0) pc = get(args, 1) - 1;},
+    (args) => {if(get(args, 0) != 0) pc = get(args, 1) - 1;},
+    (args) => {fsp ++; funcstack[fsp & AL] = (pc + 1) & DL; pc = get(args, 0) - 1;},
+    (args) => {
+        monitor.character(get(args, 0), get(args, 1), get(args, 2),
+        getHexRGBA(pregs[PREGS.$FCOLOR], true), getHexRGBA(pregs[PREGS.$BGCOLOR], false));
+    },
+    (args) => {monitor.clear()},
+    (args) => {monitor.dot(get(args, 0), get(args, 1), getHexRGBA(get(args, 2)));
+        swaprequest |= !monitor.swapmode
+    },
+    (args) => {
+        monitor.plot(get(args, 0), get(args, 1), get(args, 2),
+        getHexRGBA(pregs[PREGS.$FCOLOR], true), getHexRGBA(pregs[PREGS.$BGCOLOR], false));
+    },
+    (args) => {monitor.swap();},
+    (args) => {
+        console.log(">", args, get(args, 0), get(args, 1), get(args, 2));
+        if(get(args, 0) > get(args, 1)) {pc = get(args, 2) - 1;}},
+    (args) => {
+        console.log("<", args, get(args, 0), get(args, 1), get(args, 2));
+        if(get(args, 0) < get(args, 1)) {pc = get(args, 2) - 1;}},
+    (args) => {
+        console.log("!>", args, get(args, 0), get(args, 1), get(args, 2));
+        if(get(args, 0) <= get(args, 1)) {pc = get(args, 2) - 1;}},
+    (args) => {
+        console.log("!<", args, get(args, 0), get(args, 1), get(args, 2));
+        if(get(args, 0) >= get(args, 1)) {pc = get(args, 2) - 1;}},
+    (args) => {
+        console.log(">=", args, get(args, 0), get(args, 1), get(args, 2));
+        if(get(args, 0) >= get(args, 1)) {pc = get(args, 2) - 1;}},
+    (args) => {
+        console.log("<=", args, get(args, 0), get(args, 1), get(args, 2));
+        if(get(args, 0) <= get(args, 1)) {pc = get(args, 2) - 1;}},
+    (args) => {shifts[0] = [0,0,0]; shifts[0] = [get(args, 0, false), get(args, 1, false), get(args, 2, false)];},
+    (args) => {shifts[1] = [0,0,0]; shifts[1] = [get(args, 0, false), get(args, 1, false), get(args, 2, false)];},
+]
+/*
+const OP = {
+    NULL: 0,
     ADD: 31,//
     SUB: 32,//
     MUL: 33,//
@@ -110,6 +233,8 @@ const OP = {
     ASH: 61,
 }
 
+*/
+/*
 const OUTPUTMAP = {
     0: -1,
     31: 2,
@@ -198,3 +323,4 @@ const ARGUMENTCOUNT = {
     52: 3,
     53: 3,
 }
+*/

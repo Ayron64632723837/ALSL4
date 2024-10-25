@@ -4,46 +4,6 @@ function clearIntervals(intervals){
     }
 }
 
-let s = document.getElementById('colormodel').value.toLowerCase()
-                            color = {
-                                r: {
-                                    shift: s.length - s.lastIndexOf('r') - 1,
-                                    bits: s.lastIndexOf('r') - s.indexOf('r') + 1,
-                                    limit: 2**(s.lastIndexOf('r') - s.indexOf('r') + 1) - 1
-                                },
-                                g: {
-                                    shift: s.length - s.lastIndexOf('g') - 1,
-                                    bits: s.lastIndexOf('g') - s.indexOf('g') + 1,
-                                    limit: 2**(s.lastIndexOf('g') - s.indexOf('g') + 1) - 1
-                                },
-                                b: {
-                                    shift: s.length - s.lastIndexOf('b') - 1,
-                                    bits: s.lastIndexOf('b') - s.indexOf('b') + 1,
-                                    limit: 2**(s.lastIndexOf('b') - s.indexOf('b') + 1) - 1
-                                },
-                                a: {
-                                    shift: s.length - s.lastIndexOf('a') - 1,
-                                    bits: s.lastIndexOf('a') - s.indexOf('a') + 1,
-                                    limit: 2**(s.lastIndexOf('a') - s.indexOf('a') + 1) - 1
-                                },
-                                k: {
-                                    shift: s.length - s.lastIndexOf('k') - 1,
-                                    bits: s.lastIndexOf('k') - s.indexOf('k') + 1,
-                                    limit: 2**(s.lastIndexOf('k') - s.indexOf('k') + 1) - 1
-                                },
-                                l: {
-                                    shift: s.length - s.lastIndexOf('l') - 1,
-                                    bits: s.lastIndexOf('l') - s.indexOf('l') + 1,
-                                    limit: 2**(s.lastIndexOf('l') - s.indexOf('l') + 1) - 1
-                                }
-                            }
-                            if(s.indexOf('r') == -1) color.r.shift = -1
-                            if(s.indexOf('g') == -1) color.g.shift = -1
-                            if(s.indexOf('b') == -1) color.b.shift = -1
-                            if(s.indexOf('a') == -1) color.a.shift = -1
-                            if(s.indexOf('k') == -1) color.k.shift = -1
-                            if(s.indexOf('l') == -1) color.l.shift = -1
-
 ram = []
 pregs = Array(32).fill(0)
 stack = []
@@ -61,6 +21,9 @@ AL = 0xff
 DS = 8
 
 shifts = [[0, 0, 0], [0, 0, 0]]
+
+let ips = 50000
+let maxips = ips / 60
 
 isRunning = false
 intervals = []
@@ -85,21 +48,72 @@ color = {
         shift: 0,
         bits: 2,
         limit: 3
+    },
+    k: {
+        shift: -1,
+        bits: 0,
+        limit: -1
+    },
+    l: {
+        shift: -1,
+        bits: 0,
+        limit: -1
     }
 }
 
-function getHexRGBA(c, raw=false){
-    let r = color.r.shift < 0 ? 255 : (((c >> color.r.shift) & color.r.limit) << 8) >> color.r.bits
-    let g = color.g.shift < 0 ? 255 : (((c >> color.g.shift) & color.g.limit) << 8) >> color.g.bits
-    let b = color.b.shift < 0 ? 255 : (((c >> color.b.shift) & color.b.limit) << 8) >> color.b.bits
-    let a = color.a.shift < 0 ? 255 : (((c >> color.a.shift) & color.a.limit) << 8) >> color.a.bits
+function setcolormodel(s){
+    color = {
+        r: {
+            shift: s.length - s.lastIndexOf('r') - 1,
+            bits: s.lastIndexOf('r') - s.indexOf('r') + 1,
+            limit: 2**(s.lastIndexOf('r') - s.indexOf('r') + 1) - 1
+        },
+        g: {
+            shift: s.length - s.lastIndexOf('g') - 1,
+            bits: s.lastIndexOf('g') - s.indexOf('g') + 1,
+            limit: 2**(s.lastIndexOf('g') - s.indexOf('g') + 1) - 1
+        },
+        b: {
+            shift: s.length - s.lastIndexOf('b') - 1,
+            bits: s.lastIndexOf('b') - s.indexOf('b') + 1,
+            limit: 2**(s.lastIndexOf('b') - s.indexOf('b') + 1) - 1
+        },
+        a: {
+            shift: s.length - s.lastIndexOf('a') - 1,
+            bits: s.lastIndexOf('a') - s.indexOf('a') + 1,
+            limit: 2**(s.lastIndexOf('a') - s.indexOf('a') + 1) - 1
+        },
+        k: {
+            shift: s.length - s.lastIndexOf('k') - 1,
+            bits: s.lastIndexOf('k') - s.indexOf('k') + 1,
+            limit: 2**(s.lastIndexOf('k') - s.indexOf('k') + 1) - 1
+        },
+        l: {
+            shift: s.length - s.lastIndexOf('l') - 1,
+            bits: s.lastIndexOf('l') - s.indexOf('l') + 1,
+            limit: 2**(s.lastIndexOf('l') - s.indexOf('l') + 1) - 1
+        }
+    }
+    if(s.indexOf('r') == -1) color.r.shift = -1
+    if(s.indexOf('g') == -1) color.g.shift = -1
+    if(s.indexOf('b') == -1) color.b.shift = -1
+    if(s.indexOf('a') == -1) color.a.shift = -1
+    if(s.indexOf('k') == -1) color.k.shift = -1
+    if(s.indexOf('l') == -1) color.l.shift = -1
+}
 
-    let k = color.k.shift < 0 ? 255 : (((c >> color.k.shift) & color.k.limit) << 8) >> color.k.bits
-    let l = color.l.shift < 0 ? 0 : (((c >> color.l.shift) & color.l.limit) << 8) >> color.l.bits
+function getHexRGBA(c, raw=false){
+    let r = color.r.shift < 0 ? 255 : ((c >> color.r.shift) & color.r.limit) * Math.floor(255 / color.r.limit)
+    let g = color.g.shift < 0 ? 255 : ((c >> color.g.shift) & color.g.limit) * Math.floor(255 / color.g.limit)
+    let b = color.b.shift < 0 ? 255 : ((c >> color.b.shift) & color.b.limit) * Math.floor(255 / color.b.limit)
+    let a = color.a.shift < 0 ? 255 : ((c >> color.a.shift) & color.a.limit) * Math.floor(255 / color.a.limit)
+
+    let k = color.k.shift < 0 ? 255 : ((c >> color.k.shift) & color.k.limit) * Math.floor(255 / color.k.limit)
+    let l = color.l.shift < 0 ? 0 : ((c >> color.l.shift) & color.l.limit) * Math.floor(255 / color.l.limit)
     
-    r = (k - l) * r >> 8
-    g = (k - l) * g >> 8
-    b = (k - l) * b >> 8
+    r &= k | l
+    g &= k | l
+    b &= k | l
     
     if(raw){
         return ((r << 24) + (g << 16) + (b << 8) + a ) >>> 0
@@ -136,7 +150,7 @@ class Screen{
     }
 
     swap(){
-        if(!this.swapmode) return
+        //if(!this.swapmode) return
         this.screen.clearRect(0, 0, this.width, this.height)
         this.screen.drawImage(this.buffercanvas, 0, 0);
     }
@@ -412,12 +426,76 @@ function get(args, index, shifted = true){
     }
 }
 
-function perform(){
-    if(code.lenght < 1) return -1
-    //if(pc < 0) return -1
-    if(pc >= code.length) return -1
-    if(pc < 0) return -1
+let c = 0
+let f = 0
+let gc = 0
+let swaprequest = false
 
+let lasttime = performance.now()
+let addedtime = 0
+
+function frame(){
+    if(!isRunning || !isWorking) return
+    
+    if(ips > 0){
+        const start = performance.now()
+        const diff = start - lasttime + addedtime
+        
+        const iterations = Math.min(maxips + addedtime, diff * ips / 1000)
+        //console.log(diff, iterations)
+        addedtime = Math.max(0, iterations - Math.floor(diff * ips / 1000))
+        
+        for(let i = 0; i < iterations; i++){
+            perform()
+            pc ++
+            c ++
+            gc ++
+        }
+        f += 1
+        if (f > 59){
+            console.warn(c, gc)
+            c = 0
+            f = 0
+        }
+        
+        lasttime = start
+    }else{
+        f += 1
+        if(f > 59){
+            console.warn(c, gc)
+            c = 0
+            f = 0
+        }
+        let s = performance.now()
+        let e = s + 16
+        while(performance.now() <= e){perform(); pc++; c++; gc++}
+
+        /*if(swaprequest){
+            monitor.swap()
+            swaprequest = false
+        }*/
+    }
+            
+    requestAnimationFrame(frame)
+}
+
+function perform(){
+    //console.error(pc)
+    if(code.lenght < 1){
+        //console.error(code, code.length)
+        return -1
+    }
+    //if(pc < 0) return -1
+    if(pc >= code.length){
+        //console.error(pc, code.length)
+        return -1
+    }
+    if(pc < 0){
+       // console.error(pc)
+        return -1
+    }
+
+    var args
     if(pc < code.length){
         args = code[pc][1]
     }else{
@@ -428,7 +506,7 @@ function perform(){
         ]]
     }
     
-    prevPC = pc
+    let prevPC = pc
 /*
     switch(code[pc][0]){
         case OP.ADD:
@@ -437,7 +515,10 @@ function perform(){
 
     }
 */
-
+    //console.log(code[pc], OPFUNCS[code[pc][0]], args)
+    //console.warn(args)
+    OPFUNCS[code[pc][0]](args)
+/*
     switch(code[pc][0]){
         case OP.ADD: set(args, 2, get(args, 0) + get(args, 1), true); break;
         case OP.SUB: set(args, 2, get(args, 0) - get(args, 1), true); break;
@@ -473,18 +554,30 @@ function perform(){
         case OP.JIS: if(get(args, 0) < get(args, 1)) pc = get(args, 2) - 1; break;
         case OP.JNG: if(get(args, 0) <= get(args, 1)) pc = get(args, 2) - 1; break;
         case OP.JNS: if(get(args, 0) >= get(args, 1)) pc = get(args, 2) - 1; break;
+        case OP.JSE: if(get(args, 0) <= get(args, 1)) pc = get(args, 2) - 1; break;
+        case OP.JGE: if(get(args, 0) >= get(args, 1)) pc = get(args, 2) - 1; break;
         
         case OP.EXT: clearIntervals(intervals); pc = 0; isRunning = false; break;
         case OP.PRINT: console.log(">>>", get(args, 0), get(args, 1), get(args, 2)); break;
         
         case OP.PNT:
             monitor.character(get(args, 0), get(args, 1), get(args, 2),
-            getHexRGBA(pregs[PREGS.$FCOLOR], true), getHexRGBA(pregs[PREGS.$BGCOLOR], false)); break;
+            getHexRGBA(pregs[PREGS.$FCOLOR], true), getHexRGBA(pregs[PREGS.$BGCOLOR], false));
+            //swaprequest |= !monitor.swapmode
+            break;
         case OP.PLT:
-            monitor.dot(get(args, 0), get(args, 1), getHexRGBA(get(args, 2))); break;
+            monitor.dot(get(args, 0), get(args, 1), getHexRGBA(get(args, 2)));
+            swaprequest |= !monitor.swapmode
+            break;
         case OP.PTL: monitor.plot(get(args, 0), get(args, 1), get(args, 2),
         getHexRGBA(pregs[PREGS.$FCOLOR], true), getHexRGBA(pregs[PREGS.$BGCOLOR], false)); break;
-        case OP.SWP: monitor.swap(); break;
+        case OP.SWP:
+            monitor.swap(); 
+            //swaprequest = true
+            break;
+        case OP.CLS:
+            monitor.clear()
+            break;
         
         case OP.RSH: set(args, 2, get(args, 0) >> get(args, 1), true); break;
         case OP.LSH: set(args, 2, get(args, 0) << get(args, 1), true); break;
@@ -495,7 +588,7 @@ function perform(){
         case OP.OSH: shifts[0] = [0,0,0]; shifts[0] = [get(args, 0, false), get(args, 1, false), get(args, 2, false)]; break;
         case OP.ASH: shifts[1] = [0,0,0]; shifts[1] = [get(args, 0, false), get(args, 1, false), get(args, 2, false)]; break;
     }
-    
+*/
     if((code[prevPC][0] != OP.OSH)&(code[prevPC][0] != OP.ASH)&(code[prevPC][0] != OP.LNP)&(code[prevPC][0] != OP.PRINT)) shifts[0] = [0, 0, 0]
     if((code[prevPC][0] != OP.OSH)&(code[prevPC][0] != OP.ASH)&(code[prevPC][0] != OP.LNP)&(code[prevPC][0] != OP.PRINT)) shifts[1] = [0, 0, 0]
 

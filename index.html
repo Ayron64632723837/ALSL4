@@ -14,18 +14,36 @@
 
     <canvas id="screen" style="background-color: black; width: 512px; height: 512px; image-rendering: pixelated;" tabindex="0"></canvas>
     <script>
-        document.getElementById("screen").addEventListener("keydown", function(e) {
+        function setKBpregFromEventDown(e){
             e.preventDefault();
-            let key = event.keyCode & 0b01111111
+            //key = event.keyCode & 0b01111111
+            //pregs[PREGS.$KB] = key
+            set([[TYPE.PREG, PREGS.$KB]], 0, event.keyCode & 0b01111111, false)
+            //performance.mark(`keydown ${key} ${gc}`)
+            //console.log(0, key, gc)
+            /*e = null
+            key = null
+            delete key
+            delete e
+            return false*/
             //console.log(key, "down", e)
-            set([[TYPE.PREG, PREGS.$KB]], 0, key, false)
-        })
-        document.getElementById("screen").addEventListener("keyup", function(e) {
+        }
+        function setKBpregFromEventUp(e){
             e.preventDefault();
-            let key = event.keyCode | 0b10000000
-            //console.log(key, "up", e)
-            set([[TYPE.PREG, PREGS.$KB]], 0, key, false)
-        })
+            //key = event.keyCode | 0b10000000
+            //pregs[PREGS.$KB] = key
+            set([[TYPE.PREG, PREGS.$KB]], 0, event.keyCode | 0b10000000, false)
+            //performance.mark(`keydown ${key} ${gc}`)
+            //console.log(0, key, gc)
+            /*e = null
+            key = null
+            delete key
+            delete e
+            return false*/
+            //console.log(key, "down", e)
+        }
+        document.getElementById("screen").addEventListener("keydown", setKBpregFromEventDown)
+        document.getElementById("screen").addEventListener("keyup", setKBpregFromEventUp)
     </script>
     
     <br>
@@ -58,25 +76,13 @@
         create(dbl, abl, null, sw=sw, sh=sh, swc=swc, shc=shc, swap, data[1])
     }
     
-    ips = Number(document.getElementById('speed').value)
-
-    let last_interval = performance.now();
-
-    clearIntervals(intervals) 
-    intervals.push(setInterval(f => {
-        const now = performance.now();
-        const dt = now - last_interval;
-        last_interval = now;
-        
-        const iterations = Math.ceil(ips * dt / 1000);
-        
-        for (let i = 0; i < iterations; ++i) {
-            perform();
-            pc++;
-        }
-    }), 1000/ips)">Start</button>
-    <button class="button" onclick="if(isWorking && isRunning){clearIntervals(intervals); pc = NaN; isRunning = false}">Stop</button>
-    <button class="button" onclick="if(isWorking){clearIntervals(intervals); isWorking = false;}">Pause</button>
+    
+    isRunning = true
+    isWorking = true
+    lasttime = performance.now()
+    frame()">Start</button>
+    <button class="button" onclick="if(isWorking && isRunning){isRunning = false; pc = 0; c = 0; f = 0; gc = 0;}">Stop</button>
+    <button class="button" onclick="if(isWorking){isWorking = false;}">Pause</button>
     
     <buttom class="button" onclick="
     var input = document.createElement('input')
@@ -112,7 +118,11 @@
             document.getElementById('shpx').value = loaddata.screen.height
             document.getElementById('sws').value = loaddata.screen.widthChars
             document.getElementById('shs').value = loaddata.screen.heightChars
-
+            document.getElementById('swapmmode').checked = loaddata.screen.swapmode
+            let c = loaddata.screen.colormodel
+            document.getElementById('colormodel').value = c
+            setcolormodel(c)
+            
             if(loaddata.screen.swapmode !== undefined){
                 document.getElementById('swapmode').checked = loaddata.screen.swapmode
             }
@@ -165,6 +175,7 @@
             widthChars: Number(document.getElementById('sws').value),
             heightChars: Number(document.getElementById('shs').value),
             swapmode: document.getElementById('swapmode').checked,
+            colormodel: document.getElementById('colormodel').value,
         },
         machine: {
             speed: Number(document.getElementById('speed').value),
@@ -178,6 +189,7 @@
     
     <pre id="code" style="width: 100%; height: auto; min-height: 500px"></pre>
     <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="range.js" type="text/javascript" charset="utf-8"></script>
     <script>
         editor = ace.edit("code");
         editor.setTheme("ace/theme/chaos");
@@ -194,7 +206,7 @@
                     <tr>
                         <th>Instructions per second</th>
                         <th>
-                            <input value = "50" id="speed" title="Speed" type="number" min="1">
+                            <input value = "50000" id="speed" title="Speed" type="number" min="1" oninput="ips = Number(this.value); maxips = Number(this.value) / 60">
                         </th>
                     </tr>
                     <tr>
@@ -261,44 +273,7 @@
                                 .height = document.getElementById('shpx').value
                             
                             let s = document.getElementById('colormodel').value.toLowerCase()
-                            color = {
-                                r: {
-                                    shift: s.length - s.lastIndexOf('r') - 1,
-                                    bits: s.lastIndexOf('r') - s.indexOf('r') + 1,
-                                    limit: 2**(s.lastIndexOf('r') - s.indexOf('r') + 1) - 1
-                                },
-                                g: {
-                                    shift: s.length - s.lastIndexOf('g') - 1,
-                                    bits: s.lastIndexOf('g') - s.indexOf('g') + 1,
-                                    limit: 2**(s.lastIndexOf('g') - s.indexOf('g') + 1) - 1
-                                },
-                                b: {
-                                    shift: s.length - s.lastIndexOf('b') - 1,
-                                    bits: s.lastIndexOf('b') - s.indexOf('b') + 1,
-                                    limit: 2**(s.lastIndexOf('b') - s.indexOf('b') + 1) - 1
-                                },
-                                a: {
-                                    shift: s.length - s.lastIndexOf('a') - 1,
-                                    bits: s.lastIndexOf('a') - s.indexOf('a') + 1,
-                                    limit: 2**(s.lastIndexOf('a') - s.indexOf('a') + 1) - 1
-                                },
-                                k: {
-                                    shift: s.length - s.lastIndexOf('k') - 1,
-                                    bits: s.lastIndexOf('k') - s.indexOf('k') + 1,
-                                    limit: 2**(s.lastIndexOf('k') - s.indexOf('k') + 1) - 1
-                                },
-                                l: {
-                                    shift: s.length - s.lastIndexOf('l') - 1,
-                                    bits: s.lastIndexOf('l') - s.indexOf('l') + 1,
-                                    limit: 2**(s.lastIndexOf('l') - s.indexOf('l') + 1) - 1
-                                }
-                            }
-                            if(s.indexOf('r') == -1) color.r.shift = -1
-                            if(s.indexOf('g') == -1) color.g.shift = -1
-                            if(s.indexOf('b') == -1) color.b.shift = -1
-                            if(s.indexOf('a') == -1) color.a.shift = -1
-                            if(s.indexOf('k') == -1) color.k.shift = -1
-                            if(s.indexOf('l') == -1) color.l.shift = -1
+                            setcolormodel(s)
                             
                             ">Apply</button>
                         </th>

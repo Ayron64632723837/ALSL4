@@ -2,10 +2,9 @@ const convertCode = {
     toPureALSL4(raw){
         let c = lex(raw)[0]
         let result = ""
-
         for(let i of c){
             result += getKeyByValue(OP, i[0], "LNP").toLowerCase()
-            for(let j = 0; j < ARGUMENTCOUNT[i[0]]; j++){
+            for(let j = 0; j < i[1].length; j++){
                 result += ` ${getArgumentALSLRepresentation(i[1][j][0], i[1][j][1])}`
             }
             result += "\n"
