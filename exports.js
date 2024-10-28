@@ -160,22 +160,22 @@ const OPFUNCS = [
     },
     (args) => {monitor.swap();},
     (args) => {
-        console.log(">", args, get(args, 0), get(args, 1), get(args, 2));
+        //console.log(">", args, get(args, 0), get(args, 1), get(args, 2));
         if(get(args, 0) > get(args, 1)) {pc = get(args, 2) - 1;}},
     (args) => {
-        console.log("<", args, get(args, 0), get(args, 1), get(args, 2));
+        //console.log("<", args, get(args, 0), get(args, 1), get(args, 2));
         if(get(args, 0) < get(args, 1)) {pc = get(args, 2) - 1;}},
     (args) => {
-        console.log("!>", args, get(args, 0), get(args, 1), get(args, 2));
+        //console.log("!>", args, get(args, 0), get(args, 1), get(args, 2));
         if(get(args, 0) <= get(args, 1)) {pc = get(args, 2) - 1;}},
     (args) => {
-        console.log("!<", args, get(args, 0), get(args, 1), get(args, 2));
+        //console.log("!<", args, get(args, 0), get(args, 1), get(args, 2));
         if(get(args, 0) >= get(args, 1)) {pc = get(args, 2) - 1;}},
     (args) => {
-        console.log(">=", args, get(args, 0), get(args, 1), get(args, 2));
+        //console.log(">=", args, get(args, 0), get(args, 1), get(args, 2));
         if(get(args, 0) >= get(args, 1)) {pc = get(args, 2) - 1;}},
     (args) => {
-        console.log("<=", args, get(args, 0), get(args, 1), get(args, 2));
+        //console.log("<=", args, get(args, 0), get(args, 1), get(args, 2));
         if(get(args, 0) <= get(args, 1)) {pc = get(args, 2) - 1;}},
     (args) => {shifts[0] = [0,0,0]; shifts[0] = [get(args, 0, false), get(args, 1, false), get(args, 2, false)];},
     (args) => {shifts[1] = [0,0,0]; shifts[1] = [get(args, 0, false), get(args, 1, false), get(args, 2, false)];},
